@@ -1,3 +1,10 @@
+def f2(list):
+    for n in range(len(list)):
+        if list[n]%2 == 1:
+            print(list[n])
+
+#f2([1,2,3,4])
+
 def f4(list):
     #print(len(list))
     sum=0
