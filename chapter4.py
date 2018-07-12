@@ -29,6 +29,17 @@ def f10_1(num):
     for i in range(0, num):
         print('*' * (i+1))
 
+def f12(list):
+    neg=False
+    for n in range(len(list)):
+        if list[n] < 0:
+            neg=True
+        else:
+            neg=False
+            break
+    print(neg)
+#f12([-1,-2,-3])
+
 def f14(list):
     neg=0
     for i in range(0,len(list)):
