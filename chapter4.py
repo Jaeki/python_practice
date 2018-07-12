@@ -25,9 +25,10 @@ def f10(num):
         for j in range(0, i+1):
             print('*',end='')
         print()
-def f10_1(num):
-    for i in range(0, num):
-        print('*' * (i+1))
+
+#def f10_1(num):
+#    for i in range(0, num):
+#        print('*' * (i+1))
 
 def f12(list):
     neg=False
@@ -46,6 +47,41 @@ def f14(list):
         if list[i] < 0:
             neg = i;
     print(neg)
+
+def f16(num):
+    for i in range(num, 0, -1):
+        print('*' * (i))
+#f16(5)
+def f18(num):
+    val=1
+    for n in range(num, 0, -1):
+        val*=n
+    print(val)
+
+#f18(5)
+
+def f20(list):
+    for n in range(len(list)):
+        for count in range(list[n], -1, -1):
+            print(count,end=' ')
+        print()
+
+#f20([5,3,6,2])
+
+#2와 3의 배수만 출력
+def f22(n):
+    for n in range (1, n+1):
+        if n%2 == 0 or n%3 == 0:
+            print(n)
+
+#f22(10)
+
+def f24(list):
+    temp = sorted(list)
+    print(temp[len(list)-2])
+
+f24([1,4,3,2,5])
+f24([3,4])
 
 def f26(list):
     for i in range(0, len(list)):
