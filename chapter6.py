@@ -48,7 +48,9 @@ def f10(matrix):
 #f10([[1,2,3],[4,5,6]])
 #f10([[1],[2],[3],[4]])
 def f12(matrix1, matrix2):
+    #Kang Na Suel
     pass
 
 def f14(rows, cols):
+    #Na Jong Sung
     pass
