@@ -20,6 +20,13 @@ def f6(list):
             big = list[i]
     return big
 
+def f8(a,b,n):
+    for i in range(a,b+1):
+        if i % n == 0:
+            print(i)
+
+#f8(1,10,2)
+
 def f10(num):
     for i in range(num):
         for j in range(0, i+1):
