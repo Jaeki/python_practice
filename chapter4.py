@@ -80,8 +80,8 @@ def f24(list):
     temp = sorted(list)
     print(temp[len(list)-2])
 
-f24([1,4,3,2,5])
-f24([3,4])
+#f24([1,4,3,2,5])
+#f24([3,4])
 
 def f26(list):
     for i in range(0, len(list)):
