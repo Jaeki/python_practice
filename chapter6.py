@@ -47,10 +47,22 @@ def f10(matrix):
 
 #f10([[1,2,3],[4,5,6]])
 #f10([[1],[2],[3],[4]])
-def f12(matrix1, matrix2):
-    #Kang Na Suel
-    pass
 
+def f12(matrix1,matrix2):
+	matrix3 = []
+	for i in range(len(matrix1)):
+		row = []
+		for j in range(len(matrix2[i])):
+			row.append([])
+		matrix3.append(row)
+	for k in range(len(matrix1)):
+		for i in range(len(matrix1)):
+			temp = 0
+			for j in range(len(matrix2)):
+				temp = temp + ( matrix1[i][j] * matrix2[j][i])
+			for p in range(len(matrix1)):
+				matrix3[i][k] = temp
+	return matrix3
 
 def f14(rows, cols):
     returnValue = []
