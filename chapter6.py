@@ -51,6 +51,31 @@ def f12(matrix1, matrix2):
     #Kang Na Suel
     pass
 
+
 def f14(rows, cols):
-    #Na Jong Sung
-    pass
+    returnValue = []
+    for row in range(rows):
+        adjact_value = []
+        for col in range(cols):
+            adjacent_count = 0
+
+            # check above
+            if row - 1 >= 0:
+                adjacent_count += 1
+
+                # check below
+            if row + 1 < rows:
+                adjacent_count += 1
+
+                # check left
+            if col - 1 >= 0:
+                adjacent_count += 1
+
+            # check right
+            if col + 1 < cols:
+                adjacent_count += 1
+            adjact_value.append(adjacent_count)
+
+        returnValue.append(adjact_value)
+
+    return returnValue
