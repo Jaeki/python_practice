@@ -24,9 +24,12 @@ try:
                 " ON takes.class_id = class.class_id"
                 " NATURAL JOIN course"
                 " where name = %s")
+        sql_del = ("DELETE * from takes where stu_id=1292001;")
+        cursor.execute(sql_del)
+        connection.commit()
         #cursor.execute(sql1)
         #cursor.execute(sql2)
-        cursor.execute(sql3, '김현정')
+        #cursor.execute(sql3, '김현정')
         result = cursor.fetchall()
 finally:
     connection.close()
