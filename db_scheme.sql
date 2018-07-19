@@ -1,12 +1,12 @@
 create table Building(
-    id int Primary key,
+    id int auto_increment Primary key,
     name varchar(200) not null,
     location varchar(200) not null,
     capacity int,
     check (capacity >= 1));
 
 create table Performance(
-    id int Primary key,
+    id int auto_increment Primary key,
     name varchar(200),
     type varchar(200),
     price int,
@@ -14,7 +14,7 @@ create table Performance(
 );
 
 create table Audience(
-    id int Primary key,
+    id int auto_increment Primary key,
     name varchar(200),
     gender char(1),
     age int,
