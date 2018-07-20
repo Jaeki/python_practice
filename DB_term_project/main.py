@@ -27,7 +27,7 @@ class MysqlDB:
     def ExecuteQuery(self, sql):
         with self.connection.cursor() as cursor:
             cursor.execute(sql)
-            connection.commit()
+            self.connection.commit()
 
 class Performance:
     pass
