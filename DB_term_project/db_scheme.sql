@@ -1,12 +1,13 @@
 create table Building(
-   BID int auto_increment primary key,
+    BID int auto_increment primary key,
     BName varchar(200) not null,
     BLocation varchar(200) not null,
     BMax int,
-    check (BMax >= 1));
+    check (BMax >= 1)
+);
 
 create table Performance (
-   PID int auto_increment primary key,
+    PID int auto_increment primary key,
     PName varchar(200),
     PType varchar(200),
     PPrice int,
@@ -14,7 +15,7 @@ create table Performance (
 );
 
 create table Audience(
-   AID int auto_increment Primary key,
+    AID int auto_increment Primary key,
     AName varchar(200),
     AGender char(1),
     AAge int ,
@@ -23,7 +24,7 @@ create table Audience(
 );
 
 create table Booking(
-   PID int ,
+    PID int ,
     AID int ,
     SeatNo int,
     foreign key (PID) references Performance on delete cascade,
@@ -31,8 +32,8 @@ create table Booking(
 );
 
 create table Assign(
-   PID int,
+    PID int,
     AID int,
     foreign key (PID) references Performance on delete cascade,
     foreign key (AI) references Audience on delete cascade
-)
+);
