@@ -1,53 +1,64 @@
 import pymysql.cursors
 
+
+class MysqlDB:
+    def __init__(self):
+        self.connection = None
+    def OpenDB(self):
+        self.connection = pymysql.connect(
+            host='147.46.215.246',
+            port=33060,
+            user='rkdsktmf@naver.com',
+            password='dbintro',
+            db='ds2_db22',
+            charset='utf8',
+            cursorclass=pymysql.cursors.DictCursor)
+        result = None
+
+    def CloseDB(self):
+        self.connection.close()
+
+    def SendQuery(self, sql):
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            result = cursor.fetchall()
+
+    # insert, delete, create table, drop
+    def ExecuteQuery(self, sql):
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            connection.commit()
+
+class Performance:
+    pass
+
+class Building:
+    pass
+
+class Audience:
+    pass
+
+
 def menu1():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu2():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu3():
-    with connection.cursor() as cursor:
-        sql = "select AID, AName, AGender, AAge from Audience"
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu4():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu5():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu6():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu7():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu8():
     a=1
@@ -60,7 +71,7 @@ def menu8():
         if Afm == 'M' or Afm == 'F':
             break
         elif Afm == 'm' or Afm == 'f':
-            Afm.upper()
+            Afm = Afm.upper()
             break
         else:
             print("입력이 잘못되었습니다. 다시 입력해 주세요.")
@@ -72,60 +83,34 @@ def menu8():
         else:
             print("입력이 잘못되었습니다. 다시 입력해 주세요.")
 
-    with connection.cursor() as cursor:
-        sql = "insert into Audience(AName, AGender, AAge) values (%s, %s, %s)"
-        cursor.execute(sql, (AName, Afm, int(AAge)))
-        connection.commit()
+    sql = ("insert into Audience(AName, AGender, AAge) values (%s, %s, %s)"%(AName, Afm, int(AAge)))
+    ExecuteQuery(sql)
 
 
 def menu9():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    a = 1
+
+    aid = int(input("Input delete ID : "))
+    while (a > 0):
+        pass
 
 def menu10():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu11():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu12():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu13():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu14():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def menu16():
-    with connection.cursor() as cursor:
-        sql = ""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
+    pass
 
 def main():
     x = 1
@@ -186,16 +171,8 @@ def main():
 
 
 if __name__ == "__main__":
+    PerformanceDB = MysqlDB()
+    PerformanceDB.OpenDB()
 
-    connection = pymysql.connect(
-        host='s.snu.ac.kr',
-        user='A2',
-        password='kns',
-        db='A2',
-        charset='utf8',
-        cursorclass=pymysql.cursors.DictCursor)
-    result = None
-    try:
-        main()
-    finally:
-        connection.close()
+    main()
+    PerformanceDB.CloseDB()
