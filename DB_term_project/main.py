@@ -1,5 +1,26 @@
 import pymysql.cursors
 
+def send_query(query, values, is_delete=False):
+    connection = pymysql.connect(
+        host='147.46.215.246',
+        port=33060,
+        # user='jaeki.hong@gmail.com',
+        # password='ghddnwls',
+        # db='ds2_db10',
+        charset='utf8',
+        cursorclass=pymysql.cursors.DictCursor)
+    result = None
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            if is_delete:
+                connection.commit()
+            else:
+                result = cursor.fetchall()
+    finally:
+        connection.close()
+    return result
 
 class MysqlDB:
     def __init__(self):
@@ -8,9 +29,6 @@ class MysqlDB:
         self.connection = pymysql.connect(
             host='147.46.215.246',
             port=33060,
-            user='rkdsktmf@naver.com',
-            password='dbintro',
-            db='ds2_db22',
             charset='utf8',
             cursorclass=pymysql.cursors.DictCursor)
         result = None
@@ -18,20 +36,45 @@ class MysqlDB:
     def CloseDB(self):
         self.connection.close()
 
-    def SendQuery(self, sql):
         with self.connection.cursor() as cursor:
-            cursor.execute(sql)
             result = cursor.fetchall()
         return result
 
     # insert, delete, create table, drop
-    def ExecuteQuery(self, sql):
         with self.connection.cursor() as cursor:
-            cursor.execute(sql)
             self.connection.commit()
+#JK Hong
+class Performance(MysqlDB):
+    def __init__(self):
+        self.sql = "test"
+        MysqlDB.__init__(self)
 
-class Performance:
-    pass
+    def insert_performance(self):
+        self.name = input("Performance name: ")
+        self.type = input("Performance type: ")
+        self.price = int(input("Performance price: "))
+        self.sql = "INSERT INTO Performance VALUES (NULL, %s, %s, %s);"
+        send_query(self.sql, (self.name, self.type, self.price), True)
+
+    def remove_performance(self):
+        self.p_id = int(input("Performance ID: "))
+        self.sql = "DELETE FROM Performance WHERE PID=%s"
+        send_query(self.sql, (self.p_id,))
+        self.sql = "DELETE FROM Booking WHERE PID=%s"
+        send_query(self.sql, (self.p_id,))
+        #error handling is necessary
+
+    def assign_performance(self):
+        self.building_id = int(input("Building ID: "))
+        self.p_id = int(input("Performance ID: "))
+        self.sql = "INSERT INTO Assign VALUES (%s %s)"
+        send_query(self.sql, (self.p_id, self.building_id))
+        Print("Successfully assign a performance")
+
+    def print_assigned_performance(self):
+        self.building_id = int(input("Building ID: "))
+        self.sql = "SELECT PID, PName, PType, PPrice FROM Performance, Building WHERE BID=%s"
+        send_query(self.sql, (self.building_id,))
 
 class Building:
     pass
@@ -70,6 +113,7 @@ class Audience(MysqlDB):
 def menu1():
     pass
 
+#print all performance JK Hong
 def menu2():
     pass
 
@@ -84,11 +128,15 @@ def menu4():
 def menu5():
     pass
 
+#insert a new performand JK Hong
 def menu6():
-    pass
+    perf = Performance()
+    perf.insert_performance()
 
+#remove a performance JK Hong
 def menu7():
-    pass
+    perf = Performance()
+    perf.remove_performance()
 
 def menu8():
     Audience.insert_aud()
@@ -96,14 +144,18 @@ def menu8():
 def menu9():
     Audience.remove_aud()
 
+#assign a performance to a building JK Hong
 def menu10():
-    pass
+    perf = Performance()
+    perf.assign_performance()
 
 def menu11():
     Audience.book_aud()
 
+#print all performances which is assigned to a building JK Hong
 def menu12():
-    pass
+    perf = Performance()
+    perf.print_assigned_performance()
 
 def menu13():
     Audience.print_book()
@@ -168,13 +220,12 @@ def main():
         elif sel == '16':
             menu16()
         else:
-            print("입력이 잘못되었습니다. 다시 입력해주세요.")
-
+            print("Invalid menu number, Please check the menu number.")
 
 
 if __name__ == "__main__":
-    g_IloveDB = MysqlDB()
-    g_IloveDB.OpenDB()
+    # g_IloveDB = MysqlDB()
+    # g_IloveDB.OpenDB()
 
     main()
-    g_IloveDB.CloseDB()
+    # g_IloveDB.CloseDB()
