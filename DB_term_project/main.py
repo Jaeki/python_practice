@@ -22,6 +22,7 @@ class MysqlDB:
         with self.connection.cursor() as cursor:
             cursor.execute(sql)
             result = cursor.fetchall()
+        return result
 
     # insert, delete, create table, drop
     def ExecuteQuery(self, sql):
