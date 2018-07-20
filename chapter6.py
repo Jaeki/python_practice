@@ -48,21 +48,36 @@ def f10(matrix):
 #f10([[1,2,3],[4,5,6]])
 #f10([[1],[2],[3],[4]])
 
-def f12(matrix1,matrix2):
-	matrix3 = []
-	for i in range(len(matrix1)):
-		row = []
-		for j in range(len(matrix2[i])):
-			row.append([])
-		matrix3.append(row)
-	for k in range(len(matrix1)):
-		for i in range(len(matrix1)):
-			temp = 0
-			for j in range(len(matrix2)):
-				temp = temp + ( matrix1[i][j] * matrix2[j][i])
-			for p in range(len(matrix1)):
-				matrix3[i][k] = temp
-	return matrix3
+def f12(matrix1, matrix2):
+    result_row_len = len(matrix1)
+    result_column_len = len(matrix2[0])
+    sum_len = len(matrix2)
+
+    resultValue = []
+
+    for i in range(result_row_len):
+        rows = []
+        for j in range(result_column_len):
+            rows.append(0)
+
+        resultValue.append(rows)
+
+    # print("{0} x {1}, {2} ".format(result_row_len,result_column_len, sum_len))
+    for i in range(result_row_len):
+
+        for j in range(result_column_len):
+            total_sum = 0
+            for k in range(sum_len):
+                # column 수만큼 합이 발생함
+
+                sum = matrix1[i][k] * matrix2[k][j]
+                total_sum += sum
+
+            resultValue[i][j] = total_sum
+
+    print(resultValue)
+
+
 
 def f14(rows, cols):
     returnValue = []
