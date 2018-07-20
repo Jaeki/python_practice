@@ -27,13 +27,13 @@ create table Booking(
     PID int ,
     AID int ,
     SeatNo int,
-    foreign key (PID) references Performance on delete cascade,
-    foreign key (AI) references Audience on delete cascade
+    foreign key (PID) references Performance(PID) ON DELETE cascade,
+    foreign key (AID) references Audience(AID) ON DELETE cascade
 );
 
 create table Assign(
     PID int,
     AID int,
-    foreign key (PID) references Performance on delete cascade,
-    foreign key (AI) references Audience on delete cascade
-);
+    foreign key (PID) references Performance(PID) on delete cascade,
+    foreign key (AID) references Audience(AID) on delete cascade
+)
