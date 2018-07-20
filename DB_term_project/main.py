@@ -19,13 +19,13 @@ class MysqlDB:
         self.connection.close()
 
     def SendQuery(self, sql):
-        with connection.cursor() as cursor:
+        with self.connection.cursor() as cursor:
             cursor.execute(sql)
             result = cursor.fetchall()
 
     # insert, delete, create table, drop
     def ExecuteQuery(self, sql):
-        with connection.cursor() as cursor:
+        with self.connection.cursor() as cursor:
             cursor.execute(sql)
             connection.commit()
 
@@ -35,8 +35,35 @@ class Performance:
 class Building:
     pass
 
-class Audience:
-    pass
+class Audience(MysqlDB):
+    def __init__(self):
+        self.sql = "test"
+        #self.connection = None
+        MysqlDB.__init__(self)
+        #super().__init__()
+
+    def print_aud(self):
+
+        self.sql = "select AID, AName, AGender, AAge from Audience"
+        print(self.sql)
+        result = MysqlDB.SendQuery(self, self.sql)
+        #result = self.SendQuery(self.sql)
+
+        return result
+
+
+
+    def insert_aud(self):
+        pass
+
+    def remove_aud(self):
+        pass
+
+    def book_aud(self):
+        pass
+
+    def print_book(self):
+        pass
 
 
 def menu1():
@@ -46,7 +73,9 @@ def menu2():
     pass
 
 def menu3():
-    pass
+    Audprint = Audience()
+    Audprint.print_aud()
+    print(Audprint)
 
 def menu4():
     pass
@@ -61,50 +90,22 @@ def menu7():
     pass
 
 def menu8():
-    a=1
-    while (a > 0):
-        AName = input("Audience Name : ")
-        break
-
-    while (a>0):
-        Afm = input("Male / Female (M/F) : ")
-        if Afm == 'M' or Afm == 'F':
-            break
-        elif Afm == 'm' or Afm == 'f':
-            Afm = Afm.upper()
-            break
-        else:
-            print("입력이 잘못되었습니다. 다시 입력해 주세요.")
-
-    while (a > 0):
-        AAge = input("Audience Age : ")
-        if int(AAge) > 0:
-            break
-        else:
-            print("입력이 잘못되었습니다. 다시 입력해 주세요.")
-
-    sql = ("insert into Audience(AName, AGender, AAge) values (%s, %s, %s)"%(AName, Afm, int(AAge)))
-    ExecuteQuery(sql)
-
+    Audience.insert_aud()
 
 def menu9():
-    a = 1
-
-    aid = int(input("Input delete ID : "))
-    while (a > 0):
-        pass
+    Audience.remove_aud()
 
 def menu10():
     pass
 
 def menu11():
-    pass
+    Audience.book_aud()
 
 def menu12():
     pass
 
 def menu13():
-    pass
+    Audience.print_book()
 
 def menu14():
     pass
@@ -171,8 +172,8 @@ def main():
 
 
 if __name__ == "__main__":
-    PerformanceDB = MysqlDB()
-    PerformanceDB.OpenDB()
+    g_IloveDB = MysqlDB()
+    g_IloveDB.OpenDB()
 
     main()
-    PerformanceDB.CloseDB()
+    g_IloveDB.CloseDB()
