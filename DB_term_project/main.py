@@ -1,36 +1,29 @@
 import pymysql.cursors
 
+PRINT_HYPHEN = "--------------------------------------------------------------------------------"
+
+# --------------------------------------------------------
+# MySQL DB Class
+# --------------------------------------------------------
 # --------------------------------------------------------
 # MySQL DB Class
 # --------------------------------------------------------
 class MysqlDB:
-
     ClassConnection = None
-
     def __init__(self):
         self.connection = MysqlDB.ClassConnection
 
     @classmethod
     def OpenDB(cls):
-
         MysqlDB.ClassConnection = pymysql.connect(
-
             host='147.46.215.246',
-
             port=33060,
-
             user='konlona@gmail.com',
-
             password='dbintro',
-
             db='ds2_db15',
-
             charset='utf8',
-
             cursorclass=pymysql.cursors.DictCursor)
-
         result = None
-
 
     @classmethod
     def CloseDB(cls):
@@ -53,7 +46,6 @@ class MysqlDB:
                     BMax int,
                     check (BMax >= 1)
                 );
-
                 create table Performance (
                     PID int auto_increment primary key,
                     PName varchar(200),
@@ -61,7 +53,6 @@ class MysqlDB:
                     PPrice int,
                     check (PPrice >= 0)
                 );
-
                 create table Audience(
                     AID int auto_increment Primary key,
                     AName varchar(200),
@@ -70,7 +61,6 @@ class MysqlDB:
                     check (AGender in ('M', 'F')),
                     check (AAge >=1)
                 );
-
                 create table Booking(
                     PID int ,
                     AID int ,
@@ -78,7 +68,6 @@ class MysqlDB:
                     foreign key (PID) references Performance(PID) ON DELETE cascade,
                     foreign key (AID) references Audience(AID) ON DELETE cascade
                 );
-
                 create table Assign(
                     PID int,
                     BID int,
@@ -91,27 +80,17 @@ class MysqlDB:
         #    cursor.execute(sql)
         #    MysqlDB.ClassConnection.commit()
 
-
     def SendQuery(self, sql):
-
         with self.connection.cursor() as cursor:
-
             cursor.execute(sql)
-
             result = cursor.fetchall()
         return result
 
-
     # insert, delete, create table, drop
-
     def ExecuteQuery(self, sql):
-
         with self.connection.cursor() as cursor:
-
             cursor.execute(sql)
-
             self.connection.commit()
-
 
 # --------------------------------------------------------
 # JK Hong
@@ -177,26 +156,18 @@ class Performance(MysqlDB):
 
         print(Performance.cHyphen)
 
-
 #--------------------------------------------------------
 # konlo 공연장 class
 #--------------------------------------------------------
 class Building(MysqlDB):
-    TableName = 'Building'
-    cHyphen = "--------------------------------------------------------------------------------"
-    #cPrintFormat = "id\10t name\20t location\10t captity\10t assinged"
-    cPrintFormat = "{0:3}   {1:15}   {2:30}   {3:7}   {4:8}"
 
     def __init__(self):
-        self.BID = None
-        self.BName = None
-        self.BLocation = None
-        self.BMax = 0
         super().__init__()
 
     def GetSQLAll(self):
         return ("select * from %s" % Building.TableName)
 
+    # build을 생성함
     def insert_building(self):
         strBuildingName     = input("Building name: ").replace("'", "\\'")
         strBuildingLocation = input("Building location: ").replace("'", "\\'")
@@ -211,6 +182,8 @@ class Building(MysqlDB):
                 "values('%.199s', '%.199s', %s)" % (strBuildingName, strBuildingLocation, CapMax))
         self.ExecuteQuery(sql)
 
+    # buidling을 삭제한다.
+    # 삭제 시 BID를 foreign key를 사용하는 것은 on delete cascade설정하여 자동 삭제 된다.
     def remove_building(self):
         BID = ''
         while BID.isdigit() == False:
@@ -236,17 +209,96 @@ class Building(MysqlDB):
             return False
 
     def print_building(self):
-        sql = "select * from Building"
+        #sql = "select * from Building"
+        sql = """
+              select B.*, IFNULL(CountTable.AssignCount, 0) as AssignCount
+              from Building as B left join
+                   (select BID, count(BID) as AssignCount from Assign group by BID) as CountTable
+                    on (B.BID = CountTable.BID)
+              """
         result = self.SendQuery(sql)
 
-        print(Building.cHyphen)
-        print(Building.cPrintFormat.format("id", "name", "location", "captity", "assinged"))
-        print(Building.cHyphen)
+        print(PRINT_HYPHEN)
+        PrintFormat = "{0:3}   {1:15}   {2:30}   {3:7}   {4:8}"
+        print(PrintFormat.format("id", "name", "location", "captity", "assinged"))
+        print(PRINT_HYPHEN)
 
         for row in result:
-            print(Building.cPrintFormat.format(row["BID"], row["BName"], row["BLocation"], row["BMax"], "assinged"))
+            print(PrintFormat.format(row["BID"], row["BName"], row["BLocation"], row["BMax"], row["AssignCount"]))
 
-        print(Building.cHyphen)
+        print(PRINT_HYPHEN)
+
+
+    # 해당하는 BID의 capacity를 전달한다.
+    # 없는 경우는 None를 return 한다.
+    # 반드시 BID가 존재하는지 확인 후에 호출 한다.
+    def get_build_capacity(self, BID):
+        MaxCapacity = None
+
+        sql = "select BMax from Building where BID=%s" % BID
+        result = self.SendQuery(sql)
+
+        for row in result:
+            MaxCapacity = row["BMax"]
+
+        return MaxCapacity
+
+
+# --------------------------------------------------------
+# konlo : print seat number
+# --------------------------------------------------------
+class Assign(MysqlDB):
+    def __init__(self):
+        super().__init__()
+
+
+    # 좌석을 출력한다. by konlo
+    def print_seat_no(self):
+        PID = int(input("Performance ID : "))
+        sql = " select BMax, Assign.BID, Assign.PID from Building join Assign on (Building.BID = Assign.BID ) where PID = %s" % PID
+        result = self.SendQuery(sql)
+
+        #할당된 공연이 있다면 이 중에 Max capacity를 가져온다.
+        if len(result) > 0 :
+            for row in result :
+                MaxCap = int(row["BMax"])
+
+            #Seat 정보를 가져온다.
+            sql = "select SeatNo, AID  from Booking where PID = %s " % PID
+            SeatResult = self.SendQuery(sql)
+
+            # seat number가 할당되지 않은 것이 있으니
+            # 있는 값을 dinctionary 형으로 저장한다.
+            SeatInfo = dict()
+            for row in SeatResult :
+                SeatInfo[int(row["SeatNo"])] = row["AID"]
+
+            print(PRINT_HYPHEN)
+            print("{0:40}    {1:20}".format("seat_number", "audience_id"))
+            print(PRINT_HYPHEN)
+
+            # 지정된 Capacity 만큼 seat number를 보여주면서
+            # 할당된 AID가 있을 경우 출력한다.
+            for i in range(1, MaxCap+1):
+                # seat_number string
+                SeatNumber = str(i)
+
+                # DB에 없는 경우는 "" 처리
+                if SeatInfo.get(i) == None:
+                    AudenceID = ""
+                # 추출된 data가 있는 경우는 SeatInfo에서 추
+                else:
+                    AudenceID = str(SeatInfo.get(i))
+
+                print("{0:40}    {1:20}".format(SeatNumber, AudenceID))
+
+            print(PRINT_HYPHEN)
+
+        else:
+            print(" PID %s is not assigned yet " % PID)
+
+
+
 
 # --------------------------------------------------------
 # rkdsktmf
@@ -276,14 +328,14 @@ class Audience:
                 Afm = Afm.upper()
                 break
             else:
-                print("Invalid input value, Please try again.")
+                print("입력이 잘못되었습니다. 다시 입력해 주세요.")
 
         while (a > 0):
             AAge = input("Audience Age : ")
             if int(AAge) > 0:
                 break
             else:
-                print("Invalid input value, Please try again.")
+                print("입력이 잘못되었습니다. 다시 입력해 주세요.")
 
         self.sql = ("insert into Audience(AName, AGender, AAge) values ('%s', '%s', %s)"% (AName, Afm, AAge))
         print(self.sql)
@@ -365,7 +417,6 @@ class Audience:
     def print_book(self):
         pass
 
-
 def menu3():
     Aud = Audience()
     Aud.print_aud()
@@ -403,10 +454,10 @@ def menu16():
 def main():
     x = 1
 
-    # building/Performance 를 위한 객체 생성
+  # building을 위한 객체 생성
     cBuilding = Building()
     cPerformance = Performance()
-
+    cAssign = Assign()
     while (x > 0):
         print("1. print all buildings")
         print("2. print all performances")
@@ -459,7 +510,8 @@ def main():
         elif sel == '13':
             menu13()
         elif sel == '14':
-            menu14()
+            cAssign.print_seat_no()
+            #menu14()
         elif sel == '15':
             break
         elif sel == '16':
