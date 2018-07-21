@@ -27,8 +27,11 @@ class MysqlDB:
         self.connection = None
     def OpenDB(self):
         self.connection = pymysql.connect(
-            host='147.46.215.246',
-            port=33060,
+            host='s.snu.ac.kr',
+            # port=33060,
+            user='A2',
+            password='kns',
+            db='A2',
             charset='utf8',
             cursorclass=pymysql.cursors.DictCursor)
         result = None
@@ -36,13 +39,18 @@ class MysqlDB:
     def CloseDB(self):
         self.connection.close()
 
+    def SendQuery(self, sql):
         with self.connection.cursor() as cursor:
+            cursor.execute(sql)
             result = cursor.fetchall()
-        return result
+            return result
 
     # insert, delete, create table, drop
-        with self.connection.cursor() as cursor:
-            self.connection.commit()
+    def ExecuteQuery(self, sql):
+         with self.connection.cursor() as cursor:
+             cursor.execute(sql)
+             self.connection.commit()
+
 #JK Hong
 class Performance(MysqlDB):
     def __init__(self):
@@ -79,29 +87,60 @@ class Performance(MysqlDB):
 class Building:
     pass
 
-class Audience(MysqlDB):
+class Audience:
     def __init__(self):
         self.sql = "test"
-        #self.connection = None
-        MysqlDB.__init__(self)
-        #super().__init__()
 
     def print_aud(self):
-
         self.sql = "select AID, AName, AGender, AAge from Audience"
-        print(self.sql)
-        result = MysqlDB.SendQuery(self, self.sql)
-        #result = self.SendQuery(self.sql)
-
-        return result
-
+        result = g_IloveDB.SendQuery(self.sql)
+        for i in range(len(result)):
+            temp = list(result[i].values())
+            print(temp)
 
 
     def insert_aud(self):
-        pass
+        a = 1
+        while (a > 0):
+            AName = input("Audience Name : ")
+            break
+
+        while (a > 0):
+            Afm = input("Male / Female (M/F) : ")
+            if Afm == 'M' or Afm == 'F':
+                break
+            elif Afm == 'm' or Afm == 'f':
+                Afm = Afm.upper()
+                break
+            else:
+                print("입력이 잘못되었습니다. 다시 입력해 주세요.")
+
+        while (a > 0):
+            AAge = input("Audience Age : ")
+            if int(AAge) > 0:
+                break
+            else:
+                print("입력이 잘못되었습니다. 다시 입력해 주세요.")
+
+        self.sql = ("insert into Audience(AName, AGender, AAge) values ('%s', '%s', %s)"% (AName, Afm, AAge))
+        print(self.sql)
+        g_IloveDB.ExecuteQuery(self.sql)
+
 
     def remove_aud(self):
-        pass
+        a = 1
+        self.sql = "select AID from Audience"
+        result = g_IloveDB.SendQuery(self.sql)
+        for i in range(len(result)):
+            temp = list(result[i].values())
+            print(temp)
+
+        while (a>0):
+            AID = int(input("Delete ID : "))
+            break
+
+        self.sql = ("delete from Audience where AID = %s" % (AID))
+        g_IloveDB.ExecuteQuery(self.sql)
 
     def book_aud(self):
         pass
@@ -118,9 +157,8 @@ def menu2():
     pass
 
 def menu3():
-    Audprint = Audience()
-    Audprint.print_aud()
-    print(Audprint)
+    Aud = Audience()
+    Aud.print_aud()
 
 def menu4():
     pass
@@ -139,10 +177,12 @@ def menu7():
     perf.remove_performance()
 
 def menu8():
-    Audience.insert_aud()
+    Aud = Audience()
+    Aud.insert_aud()
 
 def menu9():
-    Audience.remove_aud()
+    Aud = Audience()
+    Aud.remove_aud()
 
 #assign a performance to a building JK Hong
 def menu10():
@@ -150,7 +190,8 @@ def menu10():
     perf.assign_performance()
 
 def menu11():
-    Audience.book_aud()
+    Aud = Audience()
+    Aud.book_aud()
 
 #print all performances which is assigned to a building JK Hong
 def menu12():
@@ -158,7 +199,8 @@ def menu12():
     perf.print_assigned_performance()
 
 def menu13():
-    Audience.print_book()
+    Aud = Audience()
+    Aud.print_book()
 
 def menu14():
     pass
@@ -224,8 +266,8 @@ def main():
 
 
 if __name__ == "__main__":
-    # g_IloveDB = MysqlDB()
-    # g_IloveDB.OpenDB()
+    g_IloveDB = MysqlDB()
+    g_IloveDB.OpenDB()
 
     main()
-    # g_IloveDB.CloseDB()
+    g_IloveDB.CloseDB()
