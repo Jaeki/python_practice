@@ -1,5 +1,6 @@
 import pymysql.cursors
 
+
 def send_query(query, values, is_delete=False):
     connection = pymysql.connect(
         host='147.46.215.246',
@@ -22,36 +23,56 @@ def send_query(query, values, is_delete=False):
         connection.close()
     return result
 
+
 class MysqlDB:
+    ClassConnection = None
+
     def __init__(self):
-        self.connection = None
-    def OpenDB(self):
-        self.connection = pymysql.connect(
-            host='s.snu.ac.kr',
-            # port=33060,
-            user='A2',
-            password='kns',
-            db='A2',
+        self.connection = MysqlDB.ClassConnection
+
+    @classmethod
+    def OpenDB(cls):
+        MysqlDB.ClassConnection = pymysql.connect(
+
+            host='147.46.215.246',
+
+            port=33060,
+
+            user='konlona@gmail.com',
+
+            password='dbintro',
+
+            db='ds2_db15',
+
             charset='utf8',
+
             cursorclass=pymysql.cursors.DictCursor)
+
         result = None
 
+    @classmethod
     def CloseDB(self):
-        self.connection.close()
+        MysqlDB.ClassConnection.close()
 
     def SendQuery(self, sql):
         with self.connection.cursor() as cursor:
             cursor.execute(sql)
+
             result = cursor.fetchall()
-            return result
+        return result
 
     # insert, delete, create table, drop
-    def ExecuteQuery(self, sql):
-         with self.connection.cursor() as cursor:
-             cursor.execute(sql)
-             self.connection.commit()
 
-#JK Hong
+    def ExecuteQuery(self, sql):
+        with self.connection.cursor() as cursor:
+            cursor.execute(sql)
+
+            self.connection.commit()
+
+
+# --------------------------------------------------------
+# JK Hong
+# --------------------------------------------------------
 class Performance(MysqlDB):
     def __init__(self):
         self.sql = "test"
@@ -70,7 +91,7 @@ class Performance(MysqlDB):
         send_query(self.sql, (self.p_id,))
         self.sql = "DELETE FROM Booking WHERE PID=%s"
         send_query(self.sql, (self.p_id,))
-        #error handling is necessary
+        # error handling is necessary
 
     def assign_performance(self):
         self.building_id = int(input("Building ID: "))
@@ -84,9 +105,42 @@ class Performance(MysqlDB):
         self.sql = "SELECT PID, PName, PType, PPrice FROM Performance, Building WHERE BID=%s"
         send_query(self.sql, (self.building_id,))
 
-class Building:
-    pass
 
+# --------------------------------------------------------
+# konlo 공연장 class
+# --------------------------------------------------------
+class Building(MysqlDB):
+    TableName = 'Building'
+
+    def __init__(self):
+        self.BID = None
+        self.BName = None
+        self.BLocation = None
+        self.BMax = 0
+        super().__init__()
+
+    def GetSQLAll(self):
+        return ("select * from %s" % Building.TableName)
+
+    def insert_building(self):
+        sql = ("insert into Building (BName, BLocation, BMax)"
+               "values('SNU_building', 'dongtan', 100)")
+        self.ExecuteQuery(sql)
+
+    def remove_building(self):
+        BID = eval(input("input building ID "))
+        sql = ("delete from Building where BID=%s" % BID)
+        self.ExecuteQuery(sql)
+
+    def print_building(self):
+        sql = "select * from Building"
+        result = self.SendQuery(sql)
+        print(result)
+
+
+# --------------------------------------------------------
+# rkdsktmf
+# --------------------------------------------------------
 class Audience:
     def __init__(self):
         self.sql = "test"
@@ -97,7 +151,6 @@ class Audience:
         for i in range(len(result)):
             temp = list(result[i].values())
             print(temp)
-
 
     def insert_aud(self):
         a = 1
@@ -126,7 +179,6 @@ class Audience:
         print(self.sql)
         g_IloveDB.ExecuteQuery(self.sql)
 
-
     def remove_aud(self):
         a = 1
         self.sql = "select AID from Audience"
@@ -135,7 +187,7 @@ class Audience:
             temp = list(result[i].values())
             print(temp)
 
-        while (a>0):
+        while (a > 0):
             AID = int(input("Delete ID : "))
             break
 
@@ -143,7 +195,62 @@ class Audience:
         g_IloveDB.ExecuteQuery(self.sql)
 
     def book_aud(self):
-        pass
+
+        self.sql = "select AID from Audience"
+        dbAID = g_IloveDB.SendQuery(self.sql)
+        AIDlist = []
+        for i in range(len(dbAID)):
+            AIDlist  = AIDlist + list(dbAID[i].values())
+
+        self.sql = "select PID from Performance"
+        dbPID = g_IloveDB.SendQuery(self.sql)
+        PIDlist = []
+        for i in range(len(dbPID)):
+            PIDlist  = PIDlist + list(dbPID[i].values())
+
+        print("Audience ID list : ")
+        print(AIDlist)
+        print("Performance ID list : ")
+        print(PIDlist)
+
+        a = 1
+        while (a>0):
+            AID = input("Audience ID : ")
+            for i in range(len(AIDlist)):
+                if AIDlist[i] == AID:
+                    a = 0
+                    break
+                else:
+                    print("w")
+
+        a = 1
+        while (a>0):
+            PID = input("Preformance ID : ")
+            for i in range(len(PIDlist)):
+                if PIDlist[i] == PID:
+                    a = 0
+                    break
+
+
+        self.sql = ("select SeatNo from Booking where PID = %s" % (PID))
+        dbSeatNo = g_IloveDB.SendQuery(self.sql)
+        Seatlist = []
+        for i in range(len(result)):
+            Seatlist  = Seatlist + list(dbSeatNo[i].values())
+        a = 1
+        while (a>0):
+            SeatNo = list(input("Seat Number : "))
+
+            for i in range(len(SeatNo)):
+                for j in range(len(Seatlist)):
+                    if Seatlist[j] == SeatNo[i]:
+                        print("Seat Number is duplicate. Please check Seat Number.")
+                        a = 0
+                        break
+
+        self.sql = ("insert into Booking(PID, AID, SeatNo) values ('%s', '%s', %s)" % (PID, AID, SeatNo))
+        print(self.sql)
+        g_IloveDB.ExecuteQuery(self.sql)
 
     def print_book(self):
         pass
@@ -152,65 +259,83 @@ class Audience:
 def menu1():
     pass
 
-#print all performance JK Hong
+
+# print all performance JK Hong
 def menu2():
     pass
+
 
 def menu3():
     Aud = Audience()
     Aud.print_aud()
 
+
 def menu4():
     pass
+
 
 def menu5():
     pass
 
-#insert a new performand JK Hong
+
+# insert a new performand JK Hong
 def menu6():
     perf = Performance()
     perf.insert_performance()
 
-#remove a performance JK Hong
+
+# remove a performance JK Hong
 def menu7():
     perf = Performance()
     perf.remove_performance()
+
 
 def menu8():
     Aud = Audience()
     Aud.insert_aud()
 
+
 def menu9():
     Aud = Audience()
     Aud.remove_aud()
 
-#assign a performance to a building JK Hong
+
+# assign a performance to a building JK Hong
 def menu10():
     perf = Performance()
     perf.assign_performance()
+
 
 def menu11():
     Aud = Audience()
     Aud.book_aud()
 
-#print all performances which is assigned to a building JK Hong
+
+# print all performances which is assigned to a building JK Hong
 def menu12():
     perf = Performance()
     perf.print_assigned_performance()
+
 
 def menu13():
     Aud = Audience()
     Aud.print_book()
 
+
 def menu14():
     pass
+
 
 def menu16():
     pass
 
+
 def main():
     x = 1
-    while (x>0):
+
+    # building을 위한 객체 생성
+    cBuilding = Building()
+    while (x > 0):
         print("1. print all buildings")
         print("2. print all performances")
         print("3. print all audiences")
@@ -230,15 +355,21 @@ def main():
 
         sel = input("select : ")
         if sel == '1':
-            menu1()
+            # menu1()
+            # building list 출력함
+            cBuilding.print_building()
         elif sel == '2':
             menu2()
         elif sel == '3':
             menu3()
+        # 4. insert a new building
         elif sel == '4':
+            cBuilding.insert_building()
             menu4()
+        # 5. remove a building
         elif sel == '5':
-            menu5()
+            # menu5()
+            cBuilding.remove_building()
         elif sel == '6':
             menu6()
         elif sel == '7':
@@ -266,8 +397,15 @@ def main():
 
 
 if __name__ == "__main__":
+    # class metho를 이용하여 DB Open를 수행한다.
+    MysqlDB.OpenDB()
     g_IloveDB = MysqlDB()
-    g_IloveDB.OpenDB()
+
+    #    g_IloveDB.OpenDB()
 
     main()
-    g_IloveDB.CloseDB()
+
+    # Main 함수가 종료되었을 때 DB를 close 한다.
+    TestClass = MysqlDB()
+
+#    g_IloveDB.CloseDB()
