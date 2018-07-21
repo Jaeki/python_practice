@@ -1,39 +1,16 @@
 import pymysql.cursors
 
-
-def send_query(query, values, is_delete=False):
-    connection = pymysql.connect(
-        host='147.46.215.246',
-        port=33060,
-        # user='jaeki.hong@gmail.com',
-        # password='ghddnwls',
-        # db='ds2_db10',
-        charset='utf8',
-        cursorclass=pymysql.cursors.DictCursor)
-    result = None
-
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute(query, values)
-            if is_delete:
-                connection.commit()
-            else:
-                result = cursor.fetchall()
-    finally:
-        connection.close()
-    return result
-
 # --------------------------------------------------------
 # MySQL DB Class
 # --------------------------------------------------------
 class MysqlDB:
 
     ClassConnection = None
-    
+
     def __init__(self):
         self.connection = MysqlDB.ClassConnection
-    
-    @classmethod 
+
+    @classmethod
     def OpenDB(cls):
 
         MysqlDB.ClassConnection = pymysql.connect(
@@ -67,8 +44,8 @@ class MysqlDB:
                 DROP TABLE Audience;
                 DROP TABLE Booking;
                 DROP TABLE Assign;
-                
-                
+
+
                 create table Building(
                     BID int auto_increment primary key,
                     BName varchar(200) not null,
@@ -108,12 +85,12 @@ class MysqlDB:
                     foreign key (PID) references Performance(PID) on delete cascade,
                     foreign key (BID) references Building(BID) on delete cascade
                 ) """
-        
+
         print(sql)
         #with MysqlDB.ClassConnection.cursor() as cursor:
         #    cursor.execute(sql)
         #    MysqlDB.ClassConnection.commit()
-            
+
 
     def SendQuery(self, sql):
 
@@ -134,42 +111,71 @@ class MysqlDB:
             cursor.execute(sql)
 
             self.connection.commit()
-            
-        
+
+
 # --------------------------------------------------------
 # JK Hong
 # --------------------------------------------------------
 class Performance(MysqlDB):
+    TableName = 'Performance'
+    cHyphen = "--------------------------------------------------------------------------------"
+    # cPrintFormat = "id\10t name\20t type\10t price\10t booked"
+    cPrintFormat = "{0:3}   {1:15}   {2:30}   {3:5}   {4:8}"
+
     def __init__(self):
-        self.sql = "test"
-        MysqlDB.__init__(self)
+        super().__init__()
 
     def insert_performance(self):
-        self.name = input("Performance name: ")
-        self.type = input("Performance type: ")
-        self.price = int(input("Performance price: "))
-        self.sql = "INSERT INTO Performance VALUES (NULL, %s, %s, %s);"
-        send_query(self.sql, (self.name, self.type, self.price), True)
+        name = input("Performance name: ")
+        type = input("Performance type: ")
+        price = int(input("Performance price: "))
+        sql = "INSERT INTO Performance (PName, PType, PPrice) VALUES ('%s', '%s', %s);"  % (name, type, price)
+        # print(sql)
+        self.ExecuteQuery(sql)
 
     def remove_performance(self):
-        self.p_id = int(input("Performance ID: "))
-        self.sql = "DELETE FROM Performance WHERE PID=%s"
-        send_query(self.sql, (self.p_id,))
-        self.sql = "DELETE FROM Booking WHERE PID=%s"
-        send_query(self.sql, (self.p_id,))
+        p_id = int(input("Performance ID: "))
+        sql = "DELETE FROM Performance WHERE PID=%s" % p_id
+        self.ExecuteQuery(sql)
+        sql = "DELETE FROM Booking WHERE PID=%s" % p_id
+        self.ExecuteQuery(sql)
         # error handling is necessary
 
     def assign_performance(self):
-        self.building_id = int(input("Building ID: "))
-        self.p_id = int(input("Performance ID: "))
-        self.sql = "INSERT INTO Assign VALUES (%s %s)"
-        send_query(self.sql, (self.p_id, self.building_id))
+        building_id = int(input("Building ID: "))
+        p_id = int(input("Performance ID: "))
+        sql = "INSERT INTO Assign VALUES (%s, %s)" % (p_id, building_id)
+        print(sql)
+        self.ExecuteQuery(sql)
         Print("Successfully assign a performance")
 
     def print_assigned_performance(self):
-        self.building_id = int(input("Building ID: "))
-        self.sql = "SELECT PID, PName, PType, PPrice FROM Performance, Building WHERE BID=%s"
-        send_query(self.sql, (self.building_id,))
+        building_id = int(input("Building ID: "))
+        sql = "SELECT PID, PName, PType, PPrice FROM Performance, Building WHERE BID=%s" % building_id
+        result = self.SendQuery(sql)
+
+        print(Performance.cHyphen)
+        print(Performance.cPrintFormat.format("id", "name", "type", "price", "booked"))
+        print(Performance.cHyphen)
+
+        for row in result:
+            print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], "booked"))
+
+        print(Performance.cHyphen)
+
+
+    def print_performances(self):
+        sql = "select * from Performance"
+        result = self.SendQuery(sql)
+
+        print(Performance.cHyphen)
+        print(Performance.cPrintFormat.format("id", "name", "type", "price", "booked"))
+        print(Performance.cHyphen)
+
+        for row in result:
+            print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], "booked"))
+
+        print(Performance.cHyphen)
 
 
 #--------------------------------------------------------
@@ -180,14 +186,14 @@ class Building(MysqlDB):
     cHyphen = "--------------------------------------------------------------------------------"
     #cPrintFormat = "id\10t name\20t location\10t captity\10t assinged"
     cPrintFormat = "{0:3}   {1:15}   {2:30}   {3:7}   {4:8}"
-    
+
     def __init__(self):
         self.BID = None
         self.BName = None
         self.BLocation = None
         self.BMax = 0
         super().__init__()
-        
+
     def GetSQLAll(self):
         return ("select * from %s" % Building.TableName)
 
@@ -195,32 +201,32 @@ class Building(MysqlDB):
         strBuildingName     = input("Building name: ").replace("'", "\\'")
         strBuildingLocation = input("Building location: ").replace("'", "\\'")
 
-        # CapMax는 number가 되도록 한다. 
+        # CapMax는 number가 되도록 한다.
         CapMax = ''
-        while CapMax.isdigit() == False:            
+        while CapMax.isdigit() == False:
             CapMax = input("Building capacity (number) : ")
 
         CapMax = int(CapMax)
         sql = ("insert into Building (BName, BLocation, BMax)"
                 "values('%.199s', '%.199s', %s)" % (strBuildingName, strBuildingLocation, CapMax))
-        self.ExecuteQuery(sql)     
+        self.ExecuteQuery(sql)
 
     def remove_building(self):
         BID = ''
-        while BID.isdigit() == False:            
+        while BID.isdigit() == False:
             BID = input("input building ID (number) : ")
-            
+
         BID = int(BID)
         # check BID in DB
-        # 있는 경우만 삭제함 
-        if self.check_BID_building(BID) :               
+        # 있는 경우만 삭제함
+        if self.check_BID_building(BID) :
             sql = ("delete from Building where BID=%s" % BID )
             self.ExecuteQuery(sql)
-        # 없는 경우는 에러 메시지 출력 
+        # 없는 경우는 에러 메시지 출력
         else:
             print("!! Error : BID %d does not exist in building database, please check it again" % BID)
 
-    # 해당하는 BID가 있는지 검사한다. 
+    # 해당하는 BID가 있는지 검사한다.
     def check_BID_building(self, BID):
         sql = (" select BID from Building where BID=%s order by BID" % BID)
         result = self.SendQuery(sql)
@@ -228,20 +234,20 @@ class Building(MysqlDB):
             return True
         else:
             return False
-                        
+
     def print_building(self):
         sql = "select * from Building"
         result = self.SendQuery(sql)
-        
+
         print(Building.cHyphen)
         print(Building.cPrintFormat.format("id", "name", "location", "captity", "assinged"))
         print(Building.cHyphen)
-        
+
         for row in result:
             print(Building.cPrintFormat.format(row["BID"], row["BName"], row["BLocation"], row["BMax"], "assinged"))
-            
+
         print(Building.cHyphen)
-            
+
 # --------------------------------------------------------
 # rkdsktmf
 # --------------------------------------------------------
@@ -270,14 +276,14 @@ class Audience:
                 Afm = Afm.upper()
                 break
             else:
-                print("입력이 잘못되었습니다. 다시 입력해 주세요.")
+                print("Invalid input value, Please try again.")
 
         while (a > 0):
             AAge = input("Audience Age : ")
             if int(AAge) > 0:
                 break
             else:
-                print("입력이 잘못되었습니다. 다시 입력해 주세요.")
+                print("Invalid input value, Please try again.")
 
         self.sql = ("insert into Audience(AName, AGender, AAge) values ('%s', '%s', %s)"% (AName, Afm, AAge))
         print(self.sql)
@@ -360,15 +366,6 @@ class Audience:
         pass
 
 
-def menu1():
-    pass
-
-
-# print all performance JK Hong
-def menu2():
-    pass
-
-
 def menu3():
     Aud = Audience()
     Aud.print_aud()
@@ -381,64 +378,35 @@ def menu4():
 def menu5():
     pass
 
-
-# insert a new performand JK Hong
-def menu6():
-    perf = Performance()
-    perf.insert_performance()
-
-
-# remove a performance JK Hong
-def menu7():
-    perf = Performance()
-    perf.remove_performance()
-
-
 def menu8():
     Aud = Audience()
     Aud.insert_aud()
-
 
 def menu9():
     Aud = Audience()
     Aud.remove_aud()
 
-
-# assign a performance to a building JK Hong
-def menu10():
-    perf = Performance()
-    perf.assign_performance()
-
-
 def menu11():
     Aud = Audience()
     Aud.book_aud()
-
-
-# print all performances which is assigned to a building JK Hong
-def menu12():
-    perf = Performance()
-    perf.print_assigned_performance()
-
 
 def menu13():
     Aud = Audience()
     Aud.print_book()
 
-
 def menu14():
     pass
-
 
 def menu16():
     pass
 
-
 def main():
     x = 1
 
-    # building을 위한 객체 생성
+    # building/Performance 를 위한 객체 생성
     cBuilding = Building()
+    cPerformance = Performance()
+
     while (x > 0):
         print("1. print all buildings")
         print("2. print all performances")
@@ -463,31 +431,31 @@ def main():
             # building list 출력함
             cBuilding.print_building()
         elif sel == '2':
-            menu2()
+            cPerformance.print_performances()
         elif sel == '3':
             menu3()
         # 4. insert a new building
         elif sel == '4':
             cBuilding.insert_building()
-            menu4()
+            # menu4()
         # 5. remove a building
         elif sel == '5':
             # menu5()
             cBuilding.remove_building()
         elif sel == '6':
-            menu6()
+            cPerformance.insert_performance()
         elif sel == '7':
-            menu7()
+            cPerformance.remove_performance()
         elif sel == '8':
             menu8()
         elif sel == '9':
             menu9()
         elif sel == '10':
-            menu10()
+            cPerformance.assign_performance()
         elif sel == '11':
             menu11()
         elif sel == '12':
-            menu12()
+            cPerformance.print_assigned_performance()
         elif sel == '13':
             menu13()
         elif sel == '14':
