@@ -495,7 +495,9 @@ def main():
         elif sel == '15':
             break
         elif sel == '16':
-            menu16()
+            #menu16()
+            if input("Really want to reset database ? (y/n) : ") == 'y':
+                MysqlDB.ResetDB()
         else:
             print("Invalid menu number, Please check the menu number.")
 
