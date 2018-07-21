@@ -5,9 +5,6 @@ PRINT_HYPHEN = "----------------------------------------------------------------
 # --------------------------------------------------------
 # MySQL DB Class
 # --------------------------------------------------------
-# --------------------------------------------------------
-# MySQL DB Class
-# --------------------------------------------------------
 class MysqlDB:
     ClassConnection = None
     def __init__(self):
@@ -99,7 +96,7 @@ class Performance(MysqlDB):
     TableName = 'Performance'
     cHyphen = "--------------------------------------------------------------------------------"
     # cPrintFormat = "id\10t name\20t type\10t price\10t booked"
-    cPrintFormat = "{0:3}   {1:15}   {2:30}   {3:5}   {4:8}"
+    cPrintFormat = "{0:3}   {1:15}   {2:30}   {3:5}   {4:6}"
 
     def __init__(self):
         super().__init__()
@@ -124,13 +121,14 @@ class Performance(MysqlDB):
         building_id = int(input("Building ID: "))
         p_id = int(input("Performance ID: "))
         sql = "INSERT INTO Assign VALUES (%s, %s)" % (p_id, building_id)
-        print(sql)
+        # print(sql)
         self.ExecuteQuery(sql)
-        Print("Successfully assign a performance")
+        print("Successfully assign a performance")
 
     def print_assigned_performance(self):
         building_id = int(input("Building ID: "))
-        sql = "SELECT PID, PName, PType, PPrice FROM Performance, Building WHERE BID=%s" % building_id
+        sql = "SELECT Performance.PID, PName, PType, PPrice FROM Performance left join Assign using(PID) WHERE Assign.BID=%s" % building_id
+        # print(sql)
         result = self.SendQuery(sql)
 
         print(Performance.cHyphen)
@@ -138,7 +136,10 @@ class Performance(MysqlDB):
         print(Performance.cHyphen)
 
         for row in result:
-            print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], "booked"))
+            sql = "SELECT count(PID) from Booking Where PID=%s" % row["PID"]
+            result = self.SendQuery(sql)
+            # print(result[0].get('count(PID)'))
+            print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], result[0].get('count(PID)')))
 
         print(Performance.cHyphen)
 
