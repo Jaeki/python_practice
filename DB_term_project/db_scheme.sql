@@ -33,7 +33,7 @@ create table Booking(
 
 create table Assign(
     PID int,
-    AID int,
+    BID int,
     foreign key (PID) references Performance(PID) on delete cascade,
-    foreign key (AID) references Audience(AID) on delete cascade
+    foreign key (BID) references Building(BID) on delete cascade
 )
