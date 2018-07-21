@@ -23,15 +23,19 @@ def send_query(query, values, is_delete=False):
         connection.close()
     return result
 
-
+# --------------------------------------------------------
+# MySQL DB Class
+# --------------------------------------------------------
 class MysqlDB:
-    ClassConnection = None
 
+    ClassConnection = None
+    
     def __init__(self):
         self.connection = MysqlDB.ClassConnection
-
-    @classmethod
+    
+    @classmethod 
     def OpenDB(cls):
+
         MysqlDB.ClassConnection = pymysql.connect(
 
             host='147.46.215.246',
@@ -50,26 +54,88 @@ class MysqlDB:
 
         result = None
 
+
     @classmethod
-    def CloseDB(self):
+    def CloseDB(cls):
         MysqlDB.ClassConnection.close()
 
+    @classmethod
+    def ResetDB(cls):
+        sql = """
+                DROP TABLE Building;
+                DROP TABLE Performance;
+                DROP TABLE Audience;
+                DROP TABLE Booking;
+                DROP TABLE Assign;
+                
+                
+                create table Building(
+                    BID int auto_increment primary key,
+                    BName varchar(200) not null,
+                    BLocation varchar(200) not null,
+                    BMax int,
+                    check (BMax >= 1)
+                );
+
+                create table Performance (
+                    PID int auto_increment primary key,
+                    PName varchar(200),
+                    PType varchar(200),
+                    PPrice int,
+                    check (PPrice >= 0)
+                );
+
+                create table Audience(
+                    AID int auto_increment Primary key,
+                    AName varchar(200),
+                    AGender char(1),
+                    AAge int ,
+                    check (AGender in ('M', 'F')),
+                    check (AAge >=1)
+                );
+
+                create table Booking(
+                    PID int ,
+                    AID int ,
+                    SeatNo int,
+                    foreign key (PID) references Performance(PID) ON DELETE cascade,
+                    foreign key (AID) references Audience(AID) ON DELETE cascade
+                );
+
+                create table Assign(
+                    PID int,
+                    BID int,
+                    foreign key (PID) references Performance(PID) on delete cascade,
+                    foreign key (BID) references Building(BID) on delete cascade
+                ) """
+        
+        print(sql)
+        #with MysqlDB.ClassConnection.cursor() as cursor:
+        #    cursor.execute(sql)
+        #    MysqlDB.ClassConnection.commit()
+            
+
     def SendQuery(self, sql):
+
         with self.connection.cursor() as cursor:
+
             cursor.execute(sql)
 
             result = cursor.fetchall()
         return result
 
+
     # insert, delete, create table, drop
 
     def ExecuteQuery(self, sql):
+
         with self.connection.cursor() as cursor:
+
             cursor.execute(sql)
 
             self.connection.commit()
-
-
+            
+        
 # --------------------------------------------------------
 # JK Hong
 # --------------------------------------------------------
@@ -106,38 +172,76 @@ class Performance(MysqlDB):
         send_query(self.sql, (self.building_id,))
 
 
-# --------------------------------------------------------
+#--------------------------------------------------------
 # konlo 공연장 class
-# --------------------------------------------------------
+#--------------------------------------------------------
 class Building(MysqlDB):
     TableName = 'Building'
-
+    cHyphen = "--------------------------------------------------------------------------------"
+    #cPrintFormat = "id\10t name\20t location\10t captity\10t assinged"
+    cPrintFormat = "{0:3}   {1:15}   {2:30}   {3:7}   {4:8}"
+    
     def __init__(self):
         self.BID = None
         self.BName = None
         self.BLocation = None
         self.BMax = 0
         super().__init__()
-
+        
     def GetSQLAll(self):
         return ("select * from %s" % Building.TableName)
 
     def insert_building(self):
+        strBuildingName     = input("Building name: ").replace("'", "\\'")
+        strBuildingLocation = input("Building location: ").replace("'", "\\'")
+
+        # CapMax는 number가 되도록 한다. 
+        CapMax = ''
+        while CapMax.isdigit() == False:            
+            CapMax = input("Building capacity (number) : ")
+
+        CapMax = int(CapMax)
         sql = ("insert into Building (BName, BLocation, BMax)"
-               "values('SNU_building', 'dongtan', 100)")
-        self.ExecuteQuery(sql)
+                "values('%.199s', '%.199s', %s)" % (strBuildingName, strBuildingLocation, CapMax))
+        self.ExecuteQuery(sql)     
 
     def remove_building(self):
-        BID = eval(input("input building ID "))
-        sql = ("delete from Building where BID=%s" % BID)
-        self.ExecuteQuery(sql)
+        BID = ''
+        while BID.isdigit() == False:            
+            BID = input("input building ID (number) : ")
+            
+        BID = int(BID)
+        # check BID in DB
+        # 있는 경우만 삭제함 
+        if self.check_BID_building(BID) :               
+            sql = ("delete from Building where BID=%s" % BID )
+            self.ExecuteQuery(sql)
+        # 없는 경우는 에러 메시지 출력 
+        else:
+            print("!! Error : BID %d does not exist in building database, please check it again" % BID)
 
+    # 해당하는 BID가 있는지 검사한다. 
+    def check_BID_building(self, BID):
+        sql = (" select BID from Building where BID=%s order by BID" % BID)
+        result = self.SendQuery(sql)
+        if len(result) > 0:
+            return True
+        else:
+            return False
+                        
     def print_building(self):
         sql = "select * from Building"
         result = self.SendQuery(sql)
-        print(result)
-
-
+        
+        print(Building.cHyphen)
+        print(Building.cPrintFormat.format("id", "name", "location", "captity", "assinged"))
+        print(Building.cHyphen)
+        
+        for row in result:
+            print(Building.cPrintFormat.format(row["BID"], row["BName"], row["BLocation"], row["BMax"], "assinged"))
+            
+        print(Building.cHyphen)
+            
 # --------------------------------------------------------
 # rkdsktmf
 # --------------------------------------------------------
