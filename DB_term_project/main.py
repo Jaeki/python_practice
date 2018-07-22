@@ -96,7 +96,7 @@ class Performance(MysqlDB):
     TableName = 'Performance'
     cHyphen = "--------------------------------------------------------------------------------"
     # cPrintFormat = "id\10t name\20t type\10t price\10t booked"
-    cPrintFormat = "{0:3}   {1:15}   {2:30}   {3:5}   {4:6}"
+    cPrintFormat = "{0:3}   {1:30}   {2:15}   {3:10}   {4:6}"
 
     def __init__(self):
         super().__init__()
@@ -104,44 +104,62 @@ class Performance(MysqlDB):
     def insert_performance(self):
         name = input("Performance name: ")
         type = input("Performance type: ")
-        price = int(input("Performance price: "))
+        try:
+            price = int(input("Performance price: "))
+            #DB의 integer 형 데이터 max 값 확인
+            if price > 2147483647:
+                raise ValueError('Out of integer range in DB system')
+        except:
+            print("!! Error : Invalid price value, Please check it again.")
+            return
         sql = "INSERT INTO Performance (PName, PType, PPrice) VALUES ('%s', '%s', %s);"  % (name, type, price)
         # print(sql)
         self.ExecuteQuery(sql)
 
     def remove_performance(self):
         p_id = int(input("Performance ID: "))
-        sql = "DELETE FROM Performance WHERE PID=%s" % p_id
-        self.ExecuteQuery(sql)
-        sql = "DELETE FROM Booking WHERE PID=%s" % p_id
-        self.ExecuteQuery(sql)
-        # error handling is necessary
+        sql = "SELECT PID FROM Performance WHERE PID=%s" % p_id
+        result = self.SendQuery(sql)
+        # print(result)
+        if len(result) > 0:
+            sql = "DELETE FROM Performance WHERE PID=%s" % p_id
+            self.ExecuteQuery(sql)
+            # sql = "DELETE FROM Booking WHERE PID=%s" % p_id
+            # self.ExecuteQuery(sql)
+        else:
+            print("!! Error : Performance ID %d does not exist in Performance database, Please check it again" % p_id)
 
     def assign_performance(self):
         building_id = int(input("Building ID: "))
         p_id = int(input("Performance ID: "))
-        sql = "INSERT INTO Assign VALUES (%s, %s)" % (p_id, building_id)
-        # print(sql)
-        self.ExecuteQuery(sql)
-        print("Successfully assign a performance")
+        sql = "SELECT PID FROM Assign WHERE PID=%s" % p_id
+        result = self.SendQuery(sql)
+        if len(result) == 0:
+            sql = "INSERT INTO Assign VALUES (%s, %s)" % (p_id, building_id)
+            self.ExecuteQuery(sql)
+            print("Successfully assign a performance")
+        else:
+            print("!! Error : Performance ID %d is already assigned, Please check it again" % p_id)
 
     def print_assigned_performance(self):
         building_id = int(input("Building ID: "))
         sql = "SELECT Performance.PID, PName, PType, PPrice FROM Performance left join Assign using(PID) WHERE Assign.BID=%s" % building_id
         # print(sql)
         result = self.SendQuery(sql)
+        if len(result) == 0:
+            print("!! Error : Any performance is not assigned to Building ID %d, Please check it again" % building_id)
+        else:
+            print(Performance.cHyphen)
+            print(Performance.cPrintFormat.format("id", "name", "type", "price", "booked"))
+            print(Performance.cHyphen)
 
-        print(Performance.cHyphen)
-        print(Performance.cPrintFormat.format("id", "name", "type", "price", "booked"))
-        print(Performance.cHyphen)
+            for row in result:
+                sql = "SELECT count(PID) from Booking Where PID=%s" % row["PID"]
+                result = self.SendQuery(sql)
+                # print(result[0].get('count(PID)'))
+                print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], result[0].get('count(PID)')))
 
-        for row in result:
-            sql = "SELECT count(PID) from Booking Where PID=%s" % row["PID"]
-            result = self.SendQuery(sql)
-            # print(result[0].get('count(PID)'))
-            print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], result[0].get('count(PID)')))
-
-        print(Performance.cHyphen)
+            print(Performance.cHyphen)
 
 
     def print_performances(self):
@@ -153,7 +171,9 @@ class Performance(MysqlDB):
         print(Performance.cHyphen)
 
         for row in result:
-            print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], "booked"))
+            sql = "SELECT count(SeatNo) from Booking Where PID=%s" % row["PID"]
+            result = self.SendQuery(sql)
+            print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], result[0].get('count(SeatNo)')))
 
         print(Performance.cHyphen)
 
@@ -523,7 +543,7 @@ class Audience(MysqlDB):
             if check_book != ():
                 a = 0
                 print(Audience.hypen)
-                print(printformat.format("AID", "AName", "AGender", "AAge"))
+                print(printformat.format("id", "name", "gender", "age"))
                 print(Audience.hypen)
 
                 for i in check_book:
@@ -602,6 +622,7 @@ def main():
             cAssign.print_seat_no()
             #menu14()
         elif sel == '15':
+            print('Bye!')
             break
         elif sel == '16':
             #menu16()
