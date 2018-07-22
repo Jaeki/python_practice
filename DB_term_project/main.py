@@ -304,16 +304,26 @@ class Assign(MysqlDB):
 # --------------------------------------------------------
 # rkdsktmf
 # --------------------------------------------------------
-class Audience:
+class Audience(MysqlDB):
+
+    hypen = "--------------------------------------------------------------------------------"
     def __init__(self):
-        self.sql = "test"
+        super().__init__()
 
     def print_aud(self):
-        self.sql = "select AID, AName, AGender, AAge from Audience"
-        result = g_IloveDB.SendQuery(self.sql)
-        for i in range(len(result)):
-            temp = list(result[i].values())
-            print(temp)
+        sql = "select AID, AName, AGender, AAge from Audience"
+        result = self.SendQuery(sql)
+
+        printformat = "{0:3}   {1:15}   {2:10}    {3:4}"
+
+        print(Audience.hypen)
+        print(printformat.format("AID", "AName", "AGender", "AAge"))
+        print(Audience.hypen)
+
+        for i in result:
+            print(printformat.format(i["AID"], i["AName"], i["AGender"], i["AAge"]))
+
+        print(Audience.hypen)
 
     def insert_aud(self):
         a = 1
@@ -338,119 +348,196 @@ class Audience:
             else:
                 print("입력이 잘못되었습니다. 다시 입력해 주세요.")
 
-        self.sql = ("insert into Audience(AName, AGender, AAge) values ('%s', '%s', %s)"% (AName, Afm, AAge))
-        print(self.sql)
-        g_IloveDB.ExecuteQuery(self.sql)
+        sql = ("insert into Audience(AName, AGender, AAge) values ('%s', '%s', %s)"% (AName, Afm, AAge))
+        self.ExecuteQuery(sql)
 
     def remove_aud(self):
         a = 1
-        self.sql = "select AID from Audience"
-        result = g_IloveDB.SendQuery(self.sql)
-        for i in range(len(result)):
-            temp = list(result[i].values())
-            print(temp)
+        sql = "select AID from Audience"
+        result = self.SendQuery(sql)
+
+        printformat = "{0:3}"
+
+        print(Audience.hypen)
+        print(printformat.format("AID"))
+        print(Audience.hypen)
+
+        for i in result:
+            print(printformat.format(i["AID"]))
+
+        print(Audience.hypen)
 
         while (a > 0):
             AID = int(input("Delete ID : "))
             break
 
-        self.sql = ("delete from Audience where AID = %s" % (AID))
-        g_IloveDB.ExecuteQuery(self.sql)
+        sql = ("delete from Audience where AID = %s" % (AID))
+        self.ExecuteQuery(sql)
 
     def book_aud(self):
 
-        self.sql = "select AID from Audience"
-        dbAID = g_IloveDB.SendQuery(self.sql)
+        sql = "select AID from Audience"
+        dbAID = self.SendQuery(sql)
         AIDlist = []
+
         for i in range(len(dbAID)):
             AIDlist  = AIDlist + list(dbAID[i].values())
 
-        self.sql = "select PID from Performance"
-        dbPID = g_IloveDB.SendQuery(self.sql)
+        sql = "select PID from Performance"
+        dbPID = self.SendQuery(sql)
         PIDlist = []
         for i in range(len(dbPID)):
             PIDlist  = PIDlist + list(dbPID[i].values())
 
+
         print("Audience ID list : ")
-        print(AIDlist)
-        print("Performance ID list : ")
-        print(PIDlist)
+
+        print(Audience.hypen)
+        print("{0:3}".format("AID"))
+        print(Audience.hypen)
+
+        for i in dbAID:
+            print("{0:3}".format(i["AID"]))
 
         a = 1
         while (a>0):
-            AID = input("Audience ID : ")
+            AID = int(input("Audience ID : "))
             for i in range(len(AIDlist)):
                 if AIDlist[i] == AID:
                     a = 0
                     break
-                else:
-                    print("w")
+            if a != 0:
+                print("Not exist ID. Check the ID")
+
+        print("Performance ID list : ")
+
+        print(Audience.hypen)
+        print("{0:3}".format("PID"))
+        print(Audience.hypen)
+
+        for i in dbPID:
+            print("{0:3}".format(i["PID"]))
+
+
 
         a = 1
         while (a>0):
-            PID = input("Preformance ID : ")
+            PID = int(input("Preformance ID : "))
             for i in range(len(PIDlist)):
                 if PIDlist[i] == PID:
                     a = 0
                     break
+            if a != 0:
+                print("Not exist ID. Check the ID")
 
 
-        self.sql = ("select SeatNo from Booking where PID = %s" % (PID))
-        dbSeatNo = g_IloveDB.SendQuery(self.sql)
+        sql = ("select SeatNo from Booking where PID = %s" % (PID))
+        dbSeatNo = self.SendQuery(sql)
         Seatlist = []
-        for i in range(len(result)):
+
+        for i in range(len(dbSeatNo)):
             Seatlist  = Seatlist + list(dbSeatNo[i].values())
+
+        Seatlist =sorted(Seatlist)
+
+        print(Audience.hypen)
+        print("{0:7}".format("SeatNo"))
+        print(Audience.hypen)
+
+        for i in range(len(Seatlist)):
+            print(Seatlist[i])
+
+        print(Audience.hypen)
+
         a = 1
         while (a>0):
-            SeatNo = list(input("Seat Number : "))
 
-            for i in range(len(SeatNo)):
-                for j in range(len(Seatlist)):
-                    if Seatlist[j] == SeatNo[i]:
-                        print("Seat Number is duplicate. Please check Seat Number.")
-                        a = 0
-                        break
+            SeatNotemp = input("Seat Number : ")
+            SeatNo = SeatNotemp.split(",")
 
-        self.sql = ("insert into Booking(PID, AID, SeatNo) values ('%s', '%s', %s)" % (PID, AID, SeatNo))
-        print(self.sql)
-        g_IloveDB.ExecuteQuery(self.sql)
+            a = 0
+            if SeatNo != ['']:
+                for i in range(len(SeatNo)):
+                    for j in range(len(Seatlist)):
+                        if Seatlist[j] == int(SeatNo[i]):
+                            print("Seat Number is duplicate. Please check Seat Number.")
+                            a = 1
+                            break
+
+        for i in range(len(SeatNo)):
+            sql = ("insert into Booking(PID, AID, SeatNo) values ('%s', '%s', %s)" % (PID, AID, int(SeatNo[i])))
+            self.ExecuteQuery(sql)
+
+
+        print("Successfully book a performance")
+
+        sql = ("select PPrice from Performance where PID = %s" % (PID))
+        dbPrice = self.SendQuery(sql)
+
+        sql = ("select AAge from Audience where AID = %s" % (AID))
+        dbAAgeTemp = self.SendQuery(sql)
+        dbAAge = []
+
+        for i in range(len(dbAAgeTemp)):
+            dbAAge = list(dbAAgeTemp[i].values())
+
+        dbAAge = int(dbAAge[0])
+
+        print(dbAAge)
+        if dbAAge < 8:
+            print("Total ticket price is Free!!")
+        elif dbAAge >= 7 and dbAAge < 13:
+            print("Total ticket price is ", dbPrice * len(SeatNo) * 0.5)
+        elif dbAAge >= 14 and dbAAge < 19:
+            print("Total ticket price is ", dbPrice * len(SeatNo) * 0.8)
+        else:
+            print("Total ticket price is ", dbPrice * len(SeatNo))
 
     def print_book(self):
-        pass
+        sql = "select PID from Performance"
+        dbPID = self.SendQuery(sql)
+        PIDlist = []
+        for i in range(len(dbPID)):
+            PIDlist  = PIDlist + list(dbPID[i].values())
 
-def menu3():
-    Aud = Audience()
-    Aud.print_aud()
+        print("Performance ID list : ")
+
+        print(Audience.hypen)
+        print("{0:3}".format("PID"))
+        print(Audience.hypen)
+
+        for i in dbPID:
+            print("{0:3}".format(i["PID"]))
+
+        print(Audience.hypen)
+
+        printformat = "{0:3}   {1:15}   {2:10}    {3:4}"
+
+        a = 1
+        while (a>0):
+            PID = int(input("Preformance ID : "))
+
+            sql = ("SELECT Audience.AID, AName, AGender, AAge FROM Audience WHERE AID IN (SELECT DISTINCT AID FROM Booking, Performance WHERE Booking.PID = Performance.PID and Booking.PID = %s)" % (PID))
+            check_book = self.SendQuery(sql)
+
+            if check_book != ():
+                a = 0
+                print(Audience.hypen)
+                print(printformat.format("AID", "AName", "AGender", "AAge"))
+                print(Audience.hypen)
+
+                for i in check_book:
+                    print(printformat.format(i["AID"], i["AName"], i["AGender"], i["AAge"]))
+
+                print(Audience.hypen)
+
+                break
+
+            else:
+                print("There is no reservation. Please check Performance ID")
 
 
-def menu4():
-    pass
 
-
-def menu5():
-    pass
-
-def menu8():
-    Aud = Audience()
-    Aud.insert_aud()
-
-def menu9():
-    Aud = Audience()
-    Aud.remove_aud()
-
-def menu11():
-    Aud = Audience()
-    Aud.book_aud()
-
-def menu13():
-    Aud = Audience()
-    Aud.print_book()
-
-def menu14():
-    pass
-
-def menu16():
-    pass
 
 def main():
     x = 1
@@ -459,6 +546,7 @@ def main():
     cBuilding = Building()
     cPerformance = Performance()
     cAssign = Assign()
+    cAudience = Audience()
     while (x > 0):
         print("1. print all buildings")
         print("2. print all performances")
@@ -485,7 +573,7 @@ def main():
         elif sel == '2':
             cPerformance.print_performances()
         elif sel == '3':
-            menu3()
+            cAudience.print_aud()
         # 4. insert a new building
         elif sel == '4':
             cBuilding.insert_building()
@@ -499,17 +587,17 @@ def main():
         elif sel == '7':
             cPerformance.remove_performance()
         elif sel == '8':
-            menu8()
+            cAudience.insert_aud()
         elif sel == '9':
-            menu9()
+            cAudience.remove_aud()
         elif sel == '10':
             cPerformance.assign_performance()
         elif sel == '11':
-            menu11()
+            cAudience.book_aud()
         elif sel == '12':
             cPerformance.print_assigned_performance()
         elif sel == '13':
-            menu13()
+            cAudience.print_book()
         elif sel == '14':
             cAssign.print_seat_no()
             #menu14()
