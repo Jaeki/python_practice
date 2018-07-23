@@ -37,7 +37,7 @@ class MysqlDB:
                     "TRUNCATE TABLE  Booking",
                     "TRUNCATE TABLE  Performance",
                     "TRUNCATE TABLE  Audience" ]
-        for sql in execute_table:
+        for sql in execute_table: 
             try:
                 with MysqlDB.ClassConnection.cursor() as cursor:
                     cursor.execute(sql)
