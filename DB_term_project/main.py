@@ -28,36 +28,56 @@ class MysqlDB:
 
     @classmethod
     def ResetDB(cls):
-        sql = """
-                DROP TABLE Building;
-                DROP TABLE Performance;
-                DROP TABLE Audience;
-                DROP TABLE Booking;
-                DROP TABLE Assign;
 
+        # drop table를 수행한다.
+        table_name = ["Assign", "Building", "Booking;", "Performance", "Audience;" ]
+        for table in table_name:
+            sql = "drop table  %s" % table
+            try:
+                with MysqlDB.ClassConnection.cursor() as cursor:
 
-                create table Building(
-                    BID int auto_increment primary key,
-                    BName varchar(200) not null,
-                    BLocation varchar(200) not null,
-                    BMax int,
-                    check (BMax >= 1)
+                    cursor.execute(sql)
+
+                    MysqlDB.ClassConnection.commit()
+            except Exception as B:
+                #print(B)
+                print("don't worry")
+
+        # 생성할 Create table SQL
+        create_table_sql = [
+            """ 
+                create table Building(                
+                    BID int auto_increment primary key,                
+                    BName varchar(200) not null,                
+                    BLocation varchar(200) not null,                
+                    BMax int,                
+                    check (BMax >= 1)                
                 );
-                create table Performance (
-                    PID int auto_increment primary key,
-                    PName varchar(200),
-                    PType varchar(200),
-                    PPrice int,
-                    check (PPrice >= 0)
+            """
+            ,
+            """
+                create table Performance (                
+                    PID int auto_increment primary key,                
+                    PName varchar(200),                
+                    PType varchar(200),                
+                    PPrice int,                
+                    check (PPrice >= 0)                
                 );
-                create table Audience(
-                    AID int auto_increment Primary key,
-                    AName varchar(200),
-                    AGender char(1),
-                    AAge int ,
-                    check (AGender in ('M', 'F')),
-                    check (AAge >=1)
+            """
+            ,
+            """               
+                
+                create table Audience(                
+                    AID int auto_increment Primary key,                
+                    AName varchar(200),                
+                    AGender char(1),                
+                    AAge int ,                
+                    check (AGender in ('M', 'F')),                
+                    check (AAge >=1)                
                 );
+            """
+            ,
+            """
                 create table Booking(
                     PID int ,
                     AID int ,
@@ -65,17 +85,30 @@ class MysqlDB:
                     foreign key (PID) references Performance(PID) ON DELETE cascade,
                     foreign key (AID) references Audience(AID) ON DELETE cascade
                 );
+            """
+            ,
+            """
                 create table Assign(
                     PID int,
                     BID int,
                     foreign key (PID) references Performance(PID) on delete cascade,
                     foreign key (BID) references Building(BID) on delete cascade
-                ) """
+                )
+            """
+        ]
 
-        print(sql)
-        #with MysqlDB.ClassConnection.cursor() as cursor:
-        #    cursor.execute(sql)
-        #    MysqlDB.ClassConnection.commit()
+        #각각의 Table를 생성한다.
+        for sql in create_table_sql:
+            #print(sql)
+            try:
+                with MysqlDB.ClassConnection.cursor() as cursor:
+
+                    cursor.execute(sql)
+
+                    MysqlDB.ClassConnection.commit()
+            except Exception as B:
+                print(B)
+                print("don't worry")
 
     def SendQuery(self, sql):
         with self.connection.cursor() as cursor:
