@@ -520,10 +520,14 @@ class Audience(MysqlDB):
         dbBmax = self.SendQuery(sql)
         BMax = []
 
-        for i in range(len(dbBmax)):
-            BMax  = BMax + list(dbBmax[i].values())
+        if list(dbBmax) == []:
+            print("There in no Max Seat data. Please insert a new building.")
+            quit(main())
+        else:
+            for i in range(len(dbBmax)):
+                BMax  = BMax + list(dbBmax[i].values())
 
-        BMax = int(BMax[0])
+            BMax = int(BMax[0])
 
         # 좌석번호 입력 및 중복확인
         # 중복 시 ERROR 메세지 출력 후 반복
@@ -535,6 +539,7 @@ class Audience(MysqlDB):
 
             for i in range(len(SeatNo)):
                 if int(SeatNo[i]) > BMax:
+                    print("Exceed max Seat Number. Please check Seat Number.")
                     quit(main())
 
             a = 0
