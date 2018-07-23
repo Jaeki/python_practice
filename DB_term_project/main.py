@@ -27,7 +27,7 @@ class MysqlDB:
         MysqlDB.ClassConnection.close()
 
     @classmethod
-   def ResetDB(cls):
+    def ResetDB(cls):
 
         # drop table를 수행한다.
         execute_table = [
