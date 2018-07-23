@@ -165,7 +165,7 @@ class Performance(MysqlDB):
     def assign_performance(self):
         building_id = int(input("Building ID: "))
         cBuilding = Building()
-        if cBuilding.check_BID_building(building_id) == False
+        if cBuilding.check_BID_building(building_id) == False:
             print("!! Error : Building ID %d does not exist, Please check it again" % building_id)
             return
         p_id = int(input("Performance ID: "))
