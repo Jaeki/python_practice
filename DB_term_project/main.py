@@ -45,35 +45,35 @@ class MysqlDB:
 
         # 생성할 Create table SQL
         create_table_sql = [
-            """ 
-                create table Building(                
-                    BID int auto_increment primary key,                
-                    BName varchar(200) not null,                
-                    BLocation varchar(200) not null,                
-                    BMax int,                
-                    check (BMax >= 1)                
+            """
+                create table Building(
+                    BID int auto_increment primary key,
+                    BName varchar(200) not null,
+                    BLocation varchar(200) not null,
+                    BMax int,
+                    check (BMax >= 1)
                 );
             """
             ,
             """
-                create table Performance (                
-                    PID int auto_increment primary key,                
-                    PName varchar(200),                
-                    PType varchar(200),                
-                    PPrice int,                
-                    check (PPrice >= 0)                
+                create table Performance (
+                    PID int auto_increment primary key,
+                    PName varchar(200),
+                    PType varchar(200),
+                    PPrice int,
+                    check (PPrice >= 0)
                 );
             """
             ,
-            """               
-                
-                create table Audience(                
-                    AID int auto_increment Primary key,                
-                    AName varchar(200),                
-                    AGender char(1),                
-                    AAge int ,                
-                    check (AGender in ('M', 'F')),                
-                    check (AAge >=1)                
+            """
+
+                create table Audience(
+                    AID int auto_increment Primary key,
+                    AName varchar(200),
+                    AGender char(1),
+                    AAge int ,
+                    check (AGender in ('M', 'F')),
+                    check (AAge >=1)
                 );
             """
             ,
@@ -164,6 +164,10 @@ class Performance(MysqlDB):
 
     def assign_performance(self):
         building_id = int(input("Building ID: "))
+        cBuilding = Building()
+        if cBuilding.check_BID_building(building_id) == False
+            print("!! Error : Building ID %d does not exist, Please check it again" % building_id)
+            return
         p_id = int(input("Performance ID: "))
         sql = "SELECT PID FROM Assign WHERE PID=%s" % p_id
         result = self.SendQuery(sql)
@@ -173,6 +177,7 @@ class Performance(MysqlDB):
             print("Successfully assign a performance")
         else:
             print("!! Error : Performance ID %d is already assigned, Please check it again" % p_id)
+            return
 
     def print_assigned_performance(self):
         building_id = int(input("Building ID: "))
