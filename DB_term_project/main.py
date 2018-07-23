@@ -37,7 +37,7 @@ class MysqlDB:
                     "TRUNCATE TABLE  Booking",
                     "TRUNCATE TABLE  Performance",
                     "TRUNCATE TABLE  Audience" ]
-        for sql in execute_table:  
+        for sql in execute_table:
             try:
                 with MysqlDB.ClassConnection.cursor() as cursor:
                     cursor.execute(sql)
@@ -59,12 +59,11 @@ class MysqlDB:
             self.connection.commit()
 
 # --------------------------------------------------------
-# JK Hong
+# 홍재기 님
 # --------------------------------------------------------
 class Performance(MysqlDB):
     TableName = 'Performance'
     cHyphen = "--------------------------------------------------------------------------------"
-    # cPrintFormat = "id\10t name\20t type\10t price\10t booked"
     cPrintFormat = "{0:3}   {1:30}   {2:15}   {3:10}   {4:6}"
 
     def __init__(self):
@@ -89,17 +88,16 @@ class Performance(MysqlDB):
         p_id = int(input("Performance ID: "))
         sql = "SELECT PID FROM Performance WHERE PID=%s" % p_id
         result = self.SendQuery(sql)
-        # print(result)
+        # 삭제하려는 공연의 ID가 DB에 있는지 확인 및 예외처리
         if len(result) > 0:
             sql = "DELETE FROM Performance WHERE PID=%s" % p_id
             self.ExecuteQuery(sql)
-            # sql = "DELETE FROM Booking WHERE PID=%s" % p_id
-            # self.ExecuteQuery(sql)
         else:
             print("!! Error : Performance ID %d does not exist in Performance database, Please check it again" % p_id)
 
     def assign_performance(self):
         building_id = int(input("Building ID: "))
+        # 할당하려는 공연장이 DB에 있는지 확인
         cBuilding = Building()
         if cBuilding.check_BID_building(building_id) == False:
             print("!! Error : Building ID %d does not exist, Please check it again" % building_id)
@@ -107,6 +105,7 @@ class Performance(MysqlDB):
         p_id = int(input("Performance ID: "))
         sql = "SELECT PID FROM Assign WHERE PID=%s" % p_id
         result = self.SendQuery(sql)
+        # 할당하려는 공연이 DB에 있는지 확인
         if len(result) == 0:
             sql = "INSERT INTO Assign VALUES (%s, %s)" % (p_id, building_id)
             self.ExecuteQuery(sql)
@@ -118,8 +117,8 @@ class Performance(MysqlDB):
     def print_assigned_performance(self):
         building_id = int(input("Building ID: "))
         sql = "SELECT Performance.PID, PName, PType, PPrice FROM Performance left join Assign using(PID) WHERE Assign.BID=%s" % building_id
-        # print(sql)
         result = self.SendQuery(sql)
+        # 공연이 공연장에 할당되어 있는지 확인
         if len(result) == 0:
             print("!! Error : Any performance is not assigned to Building ID %d, Please check it again" % building_id)
         else:
@@ -134,7 +133,6 @@ class Performance(MysqlDB):
                 print(Performance.cPrintFormat.format(row["PID"], row["PName"], row["PType"], row["PPrice"], result[0].get('count(PID)')))
 
             print(Performance.cHyphen)
-
 
     def print_performances(self):
         sql = "select * from Performance"
@@ -152,7 +150,7 @@ class Performance(MysqlDB):
         print(Performance.cHyphen)
 
 #--------------------------------------------------------
-# konlo 공연장 class
+# 나종성 님
 #--------------------------------------------------------
 class Building(MysqlDB):
 
@@ -237,12 +235,11 @@ class Building(MysqlDB):
 
 
 # --------------------------------------------------------
-# konlo : print seat number
+# 나종성 님
 # --------------------------------------------------------
 class Assign(MysqlDB):
     def __init__(self):
         super().__init__()
-
 
     # 좌석을 출력한다. by konlo
     def print_seat_no(self):
@@ -288,12 +285,8 @@ class Assign(MysqlDB):
 
         else:
             print(" PID %s is not assigned yet " % PID)
-
-
-
-
 # --------------------------------------------------------
-# rkdsktmf
+# 강나슬 님
 # --------------------------------------------------------
 class Audience(MysqlDB):
 
@@ -564,25 +557,19 @@ class Audience(MysqlDB):
                     print(printformat.format(i["AID"], i["AName"], i["AGender"], i["AAge"]))
 
                 print(Audience.hypen)
-
                 break
 
             else:
                 print("There is no reservation. Please check Performance ID")
                 quit(main())
 
-
-
-
 def main():
-    x = 1
-
-  # building을 위한 객체 생성
+  # 객체 생성
     cBuilding = Building()
     cPerformance = Performance()
     cAssign = Assign()
     cAudience = Audience()
-    while (x > 0):
+    while (True):
         print("1. print all buildings")
         print("2. print all performances")
         print("3. print all audiences")
@@ -602,20 +589,14 @@ def main():
 
         sel = input("select : ")
         if sel == '1':
-            # menu1()
-            # building list 출력함
             cBuilding.print_building()
         elif sel == '2':
             cPerformance.print_performances()
         elif sel == '3':
             cAudience.print_aud()
-        # 4. insert a new building
         elif sel == '4':
             cBuilding.insert_building()
-            # menu4()
-        # 5. remove a building
         elif sel == '5':
-            # menu5()
             cBuilding.remove_building()
         elif sel == '6':
             cPerformance.insert_performance()
@@ -635,12 +616,10 @@ def main():
             cAudience.print_book()
         elif sel == '14':
             cAssign.print_seat_no()
-            #menu14()
         elif sel == '15':
             print('Bye!')
             break
         elif sel == '16':
-            #menu16()
             if input("Really want to reset database ? (y/n) : ") == 'y':
                 MysqlDB.ResetDB()
         else:
@@ -650,13 +629,4 @@ def main():
 if __name__ == "__main__":
     # class metho를 이용하여 DB Open를 수행한다.
     MysqlDB.OpenDB()
-    g_IloveDB = MysqlDB()
-
-    #    g_IloveDB.OpenDB()
-
     main()
-
-    # Main 함수가 종료되었을 때 DB를 close 한다.
-    TestClass = MysqlDB()
-
-#    g_IloveDB.CloseDB()
