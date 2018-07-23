@@ -23,3 +23,8 @@ git 에 code push 하는 방법
     git push -u origin master
 
 (7) repository 에서 본인이 업데이트한 코드가 잘 들어갔는지 확인합니다.
+
+(8) 
+ 자신이 작업한 내용을 모두 원복 시킬 때 
+ git stash
+ 
