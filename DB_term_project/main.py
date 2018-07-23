@@ -38,7 +38,6 @@ class MysqlDB:
                     "TRUNCATE TABLE  Performance",
                     "TRUNCATE TABLE  Audience" ]
         for sql in execute_table:
-            #sql = "drop table  %s" % table
             try:
                 with MysqlDB.ClassConnection.cursor() as cursor:
                     cursor.execute(sql)
