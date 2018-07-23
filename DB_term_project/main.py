@@ -218,9 +218,6 @@ class Building(MysqlDB):
     def __init__(self):
         super().__init__()
 
-    def GetSQLAll(self):
-        return ("select * from %s" % Building.TableName)
-
     # build을 생성함
     def insert_building(self):
         strBuildingName     = input("Building name: ").replace("'", "\\'")
