@@ -636,6 +636,7 @@ class Audience(MysqlDB):
 
             else:
                 print("There is no reservation. Please check Performance ID")
+                quit(main())
 
 
 
