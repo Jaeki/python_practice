@@ -516,6 +516,15 @@ class Audience(MysqlDB):
 
         print(Audience.hypen)
 
+        sql = ("select BMax from Building where BID in (select BID from Performance, Assign where Assign.PID = Performance.PID and Assign.PID = %s)" % (PID))
+        dbBmax = self.SendQuery(sql)
+        BMax = []
+
+        for i in range(len(dbBmax)):
+            BMax  = BMax + list(dbBmax[i].values())
+
+        BMax = int(BMax[0])
+
         # 좌석번호 입력 및 중복확인
         # 중복 시 ERROR 메세지 출력 후 반복
         a = 1
@@ -523,6 +532,10 @@ class Audience(MysqlDB):
 
             SeatNotemp = input("Seat Number : ")
             SeatNo = SeatNotemp.split(",")
+
+            for i in range(len(SeatNo)):
+                if int(SeatNo[i]) > BMax:
+                    quit(main())
 
             a = 0
             if SeatNo != ['']:
