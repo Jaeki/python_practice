@@ -331,6 +331,7 @@ class Audience(MysqlDB):
         super().__init__()
 
     def print_aud(self):
+        # 관객 입력 값 SQL로 받은 후 출력
         sql = "select AID, AName, AGender, AAge from Audience"
         result = self.SendQuery(sql)
 
@@ -346,11 +347,14 @@ class Audience(MysqlDB):
         print(Audience.hypen)
 
     def insert_aud(self):
+        # 관객 입력 시 이름 , 성별, 나이 입력.
         a = 1
         while (a > 0):
             AName = input("Audience Name : ")
             break
 
+        # 성별은 소문자로 입력시에도 자동으로 대문자로 변경
+        # 다른 문자나 숫자 입력 시 오류 발생 후 반복
         while (a > 0):
             Afm = input("Male / Female (M/F) : ")
             if Afm == 'M' or Afm == 'F':
@@ -360,18 +364,22 @@ class Audience(MysqlDB):
                 break
             else:
                 print("입력이 잘못되었습니다. 다시 입력해 주세요.")
+                quit(main())
 
+        # 나이 입력 받는 부분 숫자가 아닐시에 반복
         while (a > 0):
             AAge = input("Audience Age : ")
             if int(AAge) > 0:
                 break
             else:
                 print("입력이 잘못되었습니다. 다시 입력해 주세요.")
+                quit(main())
 
-        sql = ("insert into Audience(AName, AGender, AAge) values ('%s', '%s', %s)"% (AName, Afm, AAge))
+        sql = ("insert into Audience(AName, AGender, AAge) values('%.199s', '%s', %s)"% (AName, Afm, AAge))
         self.ExecuteQuery(sql)
 
     def remove_aud(self):
+        # DB에 저장되어 있는 관객 ID를 출력
         a = 1
         sql = "select AID from Audience"
         result = self.SendQuery(sql)
@@ -387,6 +395,7 @@ class Audience(MysqlDB):
 
         print(Audience.hypen)
 
+        # 입력하는 값에 매칭되는 DATA 삭제
         while (a > 0):
             AID = int(input("Delete ID : "))
             break
@@ -396,6 +405,7 @@ class Audience(MysqlDB):
 
     def book_aud(self):
 
+        # AID 저장된 목록을 불러와 LIST에 따로 저장
         sql = "select AID from Audience"
         dbAID = self.SendQuery(sql)
         AIDlist = []
@@ -403,13 +413,14 @@ class Audience(MysqlDB):
         for i in range(len(dbAID)):
             AIDlist  = AIDlist + list(dbAID[i].values())
 
+        # PID 저장된 목록을 불러와 LIST에 따로 저장
         sql = "select PID from Performance"
         dbPID = self.SendQuery(sql)
         PIDlist = []
         for i in range(len(dbPID)):
             PIDlist  = PIDlist + list(dbPID[i].values())
 
-
+        # 관객 ID 리스트 확인용 출력 + ID 입력
         print("Audience ID list : ")
 
         print(Audience.hypen)
@@ -419,6 +430,7 @@ class Audience(MysqlDB):
         for i in dbAID:
             print("{0:3}".format(i["AID"]))
 
+        # AID 입력값이 DB에 없는 경우 반복
         a = 1
         while (a>0):
             AID = int(input("Audience ID : "))
@@ -428,7 +440,9 @@ class Audience(MysqlDB):
                     break
             if a != 0:
                 print("Not exist ID. Check the ID")
+                quit(main())
 
+        # 공연 ID 리스트 확인용 출력 + ID 입력
         print("Performance ID list : ")
 
         print(Audience.hypen)
@@ -438,8 +452,7 @@ class Audience(MysqlDB):
         for i in dbPID:
             print("{0:3}".format(i["PID"]))
 
-
-
+        # PID 입력값이 DB에 없는 경우 반복
         a = 1
         while (a>0):
             PID = int(input("Preformance ID : "))
@@ -449,8 +462,9 @@ class Audience(MysqlDB):
                     break
             if a != 0:
                 print("Not exist ID. Check the ID")
+                quit(main())
 
-
+        # 공연별 저장된 좌석번호 출력
         sql = ("select SeatNo from Booking where PID = %s" % (PID))
         dbSeatNo = self.SendQuery(sql)
         Seatlist = []
@@ -469,6 +483,8 @@ class Audience(MysqlDB):
 
         print(Audience.hypen)
 
+        # 좌석번호 입력 및 중복확인
+        # 중복 시 ERROR 메세지 출력 후 반복
         a = 1
         while (a>0):
 
@@ -481,18 +497,25 @@ class Audience(MysqlDB):
                     for j in range(len(Seatlist)):
                         if Seatlist[j] == int(SeatNo[i]):
                             print("Seat Number is duplicate. Please check Seat Number.")
-                            a = 1
-                            break
+                            quit(main())
+
 
         for i in range(len(SeatNo)):
-            sql = ("insert into Booking(PID, AID, SeatNo) values ('%s', '%s', %s)" % (PID, AID, int(SeatNo[i])))
+            sql = ("insert into Booking(PID, AID, SeatNo) values (%s, %s, %s)" % (PID, AID, int(SeatNo[i])))
             self.ExecuteQuery(sql)
 
-
+        # 중복확인 후 결과 완료 되면 관객이 예매한 공연 가격 계산
         print("Successfully book a performance")
 
         sql = ("select PPrice from Performance where PID = %s" % (PID))
         dbPrice = self.SendQuery(sql)
+
+        SeatPrice = []
+
+        for i in range(len(dbPrice)):
+            SeatPrice  = SeatPrice + list(dbPrice[i].values())
+
+        SeatPrice = int(SeatPrice[0])
 
         sql = ("select AAge from Audience where AID = %s" % (AID))
         dbAAgeTemp = self.SendQuery(sql)
@@ -503,17 +526,18 @@ class Audience(MysqlDB):
 
         dbAAge = int(dbAAge[0])
 
-        print(dbAAge)
+        # IF문으로 나이별 그룹 생성 후 계산
         if dbAAge < 8:
             print("Total ticket price is Free!!")
         elif dbAAge >= 7 and dbAAge < 13:
-            print("Total ticket price is ", dbPrice * len(SeatNo) * 0.5)
+            print("Total ticket price is", SeatPrice * len(SeatNo) * 0.5)
         elif dbAAge >= 14 and dbAAge < 19:
-            print("Total ticket price is ", dbPrice * len(SeatNo) * 0.8)
+            print("Total ticket price is", SeatPrice * len(SeatNo) * 0.8)
         else:
-            print("Total ticket price is ", dbPrice * len(SeatNo))
+            print("Total ticket price is", SeatPrice * len(SeatNo))
 
     def print_book(self):
+        # 공연 DB에서 저장되어 있는 PID를 불러온다.
         sql = "select PID from Performance"
         dbPID = self.SendQuery(sql)
         PIDlist = []
@@ -533,6 +557,7 @@ class Audience(MysqlDB):
 
         printformat = "{0:3}   {1:15}   {2:10}    {3:4}"
 
+        # 입력된 PID에 대해 예약한 사람의 ID, 이름, 성별, 나이를 출력한다.
         a = 1
         while (a>0):
             PID = int(input("Preformance ID : "))
@@ -543,7 +568,7 @@ class Audience(MysqlDB):
             if check_book != ():
                 a = 0
                 print(Audience.hypen)
-                print(printformat.format("id", "name", "gender", "age"))
+                print(printformat.format("ID", "Name", "Gender", "Age"))
                 print(Audience.hypen)
 
                 for i in check_book:
