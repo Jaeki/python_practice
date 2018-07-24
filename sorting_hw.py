@@ -9,11 +9,21 @@ def selection_sort(lst):
                 mp = i
         lst[bottom], lst[mp] = lst[mp], lst[bottom]
 
-def insertion_sort(list):
-    pass
+def insertion_sort(lst):
+    for i in range(1, len(lst)):
+        j = i
+        while j > 0 and lst[j] < lst[j-1]:
+            lst[j], lst[j-1] = lst[j-1], lst[j]
+            j-= 1
+    return lst
 
-def bubble_sort(list):
-    pass
+
+def bubble_sort(lst):
+    for i in range(len(lst)):
+        for j in range(len(lst)-1-i):
+            if lst[j] > lst[j+1]:
+                lst[j], lst[j+1] = lst[j+1], lst[j]
+    return lst
 
 def merge(a, b):
     index_a =0
@@ -41,12 +51,30 @@ def merge_sort(lst):
     newlst = merge(newlst1, newlst2)
     return newlst
 
-def quick_sort(list):
-    pass
+def quick_sort(lst):
+    if len(lst) > 1:
+        pivot_index = len(lst) //2
+        smaller_lst = []
+        larger_lst = []
+
+        for i, val in enumerate(lst):
+            if i != pivot_index:
+                if val < lst[pivot_index]:
+                    smaller_lst.append(val)
+                else:
+                    larger_lst.append(val)
+
+        quick_sort(smaller_lst)
+        quick_sort(larger_lst)
+        lst[:] = smaller_lst + [lst[pivot_index]] + larger_lst
+
+    return lst
+
 
 # 100 개의 random number 생성
+data_10 = random.sample(range(100000),10)
 data_100 = random.sample(range(100000),100)
 data_1000 = random.sample(range(100000),1000)
 data_10000 = random.sample(range(100000),10000)
-print(data_100)
-print(merge_sort(data_100))
+print(data_10)
+print(insertion_sort(data_10))
