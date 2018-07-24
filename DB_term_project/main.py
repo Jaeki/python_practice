@@ -168,11 +168,13 @@ class Building(MysqlDB):
         strBuildingLocation = input("Building location: ").replace("'", "\\'")
 
         # CapMax는 number가 되도록 한다.
-        CapMax = ''
-        while CapMax.isdigit() == False:
-            CapMax = input("Building capacity (number) : ")
 
+        CapMax = input("Building capacity (number) : ")
         CapMax = int(CapMax)
+        if CapMax <= 0 :
+            print("!! Error : Capacity should be greater than 0")
+            return
+
         sql = ("insert into Building (BName, BLocation, BMax)"
                 "values('%.199s', '%.199s', %s)" % (strBuildingName, strBuildingLocation, CapMax))
         self.ExecuteQuery(sql)
@@ -347,6 +349,7 @@ class Audience(MysqlDB):
         sql = ("insert into Audience(AName, AGender, AAge) values('%.199s', '%s', %s)"% (AName, Afm, AAge))
         self.ExecuteQuery(sql)
 
+
     def remove_aud(self):
         # DB에 저장되어 있는 관객 ID를 출력
         a = 1
@@ -363,14 +366,20 @@ class Audience(MysqlDB):
             print(printformat.format(i["AID"]))
 
         print(Audience.hypen)
+        checkAID = []
+        for i in range(len(result)):
+            checkAID = checkAID + list(result[i].values())
 
         # 입력하는 값에 매칭되는 DATA 삭제
-        while (a > 0):
-            AID = int(input("Delete ID : "))
-            break
+        # 관객 id가 맞지 않으면 오류 발생 후 메인메뉴로 돌아간다.
+        AID = int(input("Delete ID : "))
 
-        sql = ("delete from Audience where AID = %s" % (AID))
-        self.ExecuteQuery(sql)
+
+        if AID in checkAID:
+            sql = ("delete from Audience where AID = %s" % (AID))
+            self.ExecuteQuery(sql)
+            return
+        print("Not matched Audience ID. Please Check ID.")
 
     def book_aud(self):
 
@@ -399,6 +408,8 @@ class Audience(MysqlDB):
         for i in dbAID:
             print("{0:3}".format(i["AID"]))
 
+        print(Audience.hypen)
+
         # AID 입력값이 DB에 없는 경우 반복
         a = 1
         while (a>0):
@@ -420,6 +431,8 @@ class Audience(MysqlDB):
 
         for i in dbPID:
             print("{0:3}".format(i["PID"]))
+
+        print(Audience.hypen)
 
         # PID 입력값이 DB에 없는 경우 반복
         a = 1
