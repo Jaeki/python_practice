@@ -636,3 +636,4 @@ if __name__ == "__main__":
     # class metho를 이용하여 DB Open를 수행한다.
     MysqlDB.OpenDB()
     main()
+    MysqlDB.CloseDB()
