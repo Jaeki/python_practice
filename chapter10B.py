@@ -5,7 +5,27 @@ def f2(n):
         print_value += i
         print(list(map(lambda x : x+print_value , range(i+1))))
 
-#f2(2)
+def f4(n):
+    print_value = 1
+
+    #증가하는 수
+    print_value = 1
+    for i in range(n):
+        result = list(map(lambda x : x+print_value , range(i+1)))
+        print(*result)
+        print_value = max(result)+1
+
+    for i in range(n-2, -1, -1):
+        result = list(map(lambda x : x+print_value , range(i+1)))
+        print(*result)
+        print_value = max(result) + 1
+
+
+
+#f4(3)
+#f4(0)
+#f4(1)
+
 
 
 
