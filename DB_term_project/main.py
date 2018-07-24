@@ -113,7 +113,6 @@ class Performance(MysqlDB):
         # 할당하려는 공연이 DB에 있는지 확인
         if len(result) == 0:
             sql = "INSERT INTO Assign VALUES (%s, %s)" % (p_id, building_id)
-            print(sql)
             self.ExecuteQuery(sql)
             print("Successfully assign a performance")
         else:
