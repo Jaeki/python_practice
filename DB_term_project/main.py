@@ -307,7 +307,7 @@ class Audience(MysqlDB):
         printformat = "{0:3}   {1:15}   {2:10}    {3:4}"
 
         print(Audience.hypen)
-        print(printformat.format("AID", "AName", "AGender", "AAge"))
+        print(printformat.format("id", "name", "gender", "age"))
         print(Audience.hypen)
 
         for i in result:
