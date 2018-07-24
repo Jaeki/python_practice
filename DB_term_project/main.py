@@ -105,9 +105,15 @@ class Performance(MysqlDB):
         p_id = int(input("Performance ID: "))
         sql = "SELECT PID FROM Assign WHERE PID=%s" % p_id
         result = self.SendQuery(sql)
+        sql = "SELECT PID FROM Performance WHERE PID=%s" % p_id
+        result1 = self.SendQuery(sql)
+        if len(result1) == 0:
+            print("!! Error : Performance ID %d does NOT exist, Please check it again" % p_id)
+            return
         # 할당하려는 공연이 DB에 있는지 확인
         if len(result) == 0:
             sql = "INSERT INTO Assign VALUES (%s, %s)" % (p_id, building_id)
+            print(sql)
             self.ExecuteQuery(sql)
             print("Successfully assign a performance")
         else:
@@ -470,7 +476,7 @@ class Audience(MysqlDB):
 
             for i in range(len(SeatNo)):
                 if int(SeatNo[i]) > BMax:
-                    print("Exceed max Seat Number. Please check Seat Number.")
+                    print("Exceed max Seat Number or not assigned. Please check Seat Number.")
                     quit(main())
 
             a = 0
