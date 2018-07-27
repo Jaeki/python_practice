@@ -47,12 +47,10 @@ def f12(items):
 #print(f12([-1, -2, -3]))
 
 def f14(items):
-    last_index = 0
-    #a = list(map(lambda x , y: last_index = y x < 0 , enumerate(items)))
-    # [-1] 은 list의 마지막을 접근하기 위한 것으로
-    return list(filter(lambda x : x[1] <0, enumerate(list)))[-1][0]
-#f14([1,2,-3])
-
+    result = list(filter(lambda x: x[1] < 0, enumerate(items)))[-1][0]
+    return result
+#print(f14([1,2, -3]))
+#print(f14([1,-2,-3,1,-2,-3]))
 
 #konlo range를 이용해서 역으로 화면 출력
 # 역시 list를 넣어야만 화면에 출력이 됨
