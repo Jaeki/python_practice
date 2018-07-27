@@ -38,9 +38,8 @@ def f10(n):
 
 
 def f12(items):
-    all(list(map(lambda x : x < 0 , items)))
-
-    return all(a)
+    resut = all(list(map(lambda x : x < 0 , items)))
+    return result
 
 #print(f12([]))
 #print(f12([-1, -2, -3, -4, 5]))
