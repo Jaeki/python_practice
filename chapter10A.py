@@ -32,12 +32,7 @@ def f8(a, b, n):
 
 #konlo check 필요 map만으로는 print를 하지 않음.
 def f10(n):
-    a= map(lambda x: print("*" * x), range(1, n + 1))
-    #print(a)
-    a = list(map(lambda x : r"*" * x, range(1, n+1)))
-    print(a)
-    #print(a)
-    #type(a)
+    print(*list(map(lambda x : "*" * x, range(1, n+1))), sep="\n")
 #f10(2)
 #f10(3)
 
