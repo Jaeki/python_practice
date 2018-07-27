@@ -55,8 +55,7 @@ def f14(items):
 #konlo range를 이용해서 역으로 화면 출력
 # 역시 list를 넣어야만 화면에 출력이 됨
 def f16(n):
-
-    list(map(lambda x : print("*" *x), range(n,0,-1)))
+    print(*list(map(lambda x : "*" *x, range(n,0,-1))), sep="\n")
 
 #f16(3)
 #f16(2)
