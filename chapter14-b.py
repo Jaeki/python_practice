@@ -1,3 +1,4 @@
+#1
 def count_matches(lst,value):
     if len( lst ) < 2:
         if len(lst) ==0:
@@ -11,6 +12,8 @@ def count_matches(lst,value):
 # print(count_matches([0,1,0,4,2,0],0))
 # print(count_matches(["a","b","c"],1))
 
+
+#2
 def double_each(lst):
     if len(lst) == 0:
         return []
@@ -19,7 +22,8 @@ def double_each(lst):
     return double_each( [lst[0]] ) +  double_each( lst[1:] )
 
 # print(double_each([1,2,3]))
-#???
+
+#3
 def sums_to(nums, k):
     tmp = nums.pop()
     if len(nums) ==0:
@@ -31,6 +35,13 @@ def sums_to(nums, k):
 
 print(sums_to([1,2,3], 6))
 
+#4
+def is_reverse(str1, str2):
+    pass
+
+
+
+#5
 def sort_repeated(lst):
     count=0
     temp = set()
@@ -41,3 +52,10 @@ def sort_repeated(lst):
 
 
 # sort_repeated([1,2,3,2,1])
+
+#6
+def make_Dict_number(lst):
+    pass
+
+
+#7

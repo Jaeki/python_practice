@@ -1,4 +1,5 @@
 #resursive 하게 풀것!
+#1 Searching
 def first_perfect_sqaure(list):
     for i in range(0,len(list)):
         if list[i] >= 0:
@@ -8,6 +9,7 @@ def first_perfect_sqaure(list):
 
 # first_perfect_sqaure([6,8,10,12,9])
 
+#2 Counting
 def num_perfect_squares(list):
     count=0
     for i in range(0,len(list)):
@@ -23,6 +25,7 @@ def num_perfect_squares(list):
 # num_perfect_squares(list(range(10)))
 # num_perfect_squares([3]*10)
 
+#3 Second largest
 def second_largest(lst):
     largest = lst[0]
     second_largest = lst[0]
