@@ -54,8 +54,50 @@ def sort_repeated(lst):
 # sort_repeated([1,2,3,2,1])
 
 #6
-def make_Dict_number(lst):
-    pass
+# make dic number without get
+def make_Dict_number(items):
+    result = {}
+    for value in items:
+        if value in result:
+            result[value] += 1
+        else:
+            result[value] = 1
+    return result
+
+# make dic number with get
+def make_Dict_number_with_get(items):
+    result = {}
+    for value in items:
+        if result.get(value):
+            result[value] += 1
+        else:
+            result[value] = 1
+    return result
+
+
+# result = make_Dict_number([2,5,3,4,6,4,2,4,5])
+# print(result)
+
+
+# result = make_Dict_number_with_get([2,5,3,4,6,4,2,4,5])
+# print(result)
+
+# frequent
+def mostFrequent(items):
+    result = {}
+    for value in items:
+        if result.get(value):
+            result[value] += 1
+        else:
+            result[value] = 1
+
+
+    MaxCount = max(result.values())
+
+    for key, value in result.items():
+        if(value == MaxCount):
+            return key
+
 
 
 #7
