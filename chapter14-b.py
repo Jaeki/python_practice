@@ -113,3 +113,23 @@ def is_reverse(str1,str2):
         return False
 
 # print(is_reverse("abc","cba"))
+
+
+def histogram(d):
+    a = list(d.values())
+    b = {}
+    for i in range(len(a)):
+        b[a[i]] = 0
+        for j in range(len(a)):
+            if a[i] == a[j]:
+                b[a[i]] = b[a[i]] + 1
+    return b
+
+# letters = {1:"a",2:"b",3:"c"}
+# print(histogram(letters))
+# letters = {1:"a", 2:"b", 3:"c"}
+# print(histogram(letters))
+# letters[4] = "a"
+# letters[5] = "b"
+# letters[6] = "a"
+# print(histogram(letters))
