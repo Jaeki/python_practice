@@ -11,6 +11,7 @@ def count_matches(lst,value):
 
 # print(count_matches([0,1,0,4,2,0],0))
 # print(count_matches(["a","b","c"],1))
+# print(count_matches([],"a"))
 
 
 #2
@@ -21,37 +22,60 @@ def double_each(lst):
         return [lst[0]] * 2
     return double_each( [lst[0]] ) +  double_each( lst[1:] )
 
-# print(double_each([1,2,3]))
+# nums = [1,2,3]
+# print(double_each(nums))
+# print(nums)
+# print(double_each([]))
+
 
 #3
-def sums_to(nums, k):
-    tmp = nums.pop()
-    if len(nums) ==0:
-        if k-tmp == 0:
+def sums_to(items, n):
+    if items == [] :
+        if n == 0:
             return True
         else:
             return False
-    return sums_to(nums, k-tmp)
 
-print(sums_to([1,2,3], 6))
+    return sums_to(items[1:], n-items[0])
 
+# nums = [1,2,3]
+# print(sums_to(nums, 6))
+# print(sums_to(nums, 5))
+# print(sums_to([], 1))
 #4
-def is_reverse(str1, str2):
-    pass
+def is_reverse(str1,str2):
+    a = ''
+    for i in range(len(str1)):
+        a = a + str1[-1]
+        str1 = str1[:len(str1)-1]
+    if a == str2:
+        return True
+    else:
+        return False
 
+# print(is_reverse("abc","cba"))
+# print(is_reverse("abc","abc"))
+# print(is_reverse("abc","dcba"))
+# print(is_reverse("abc","cb"))
+# print(is_reverse("",""))
 
 
 #5
-def sort_repeated(lst):
-    count=0
-    temp = set()
-    for i in range(len(lst)):
-        if lst.count(lst[i]) > 1:
-            temp.add(lst[i])
-    print(temp)
+def sort_repeated(items):
+
+    resultList = []
+    setValue = set(items)
+
+    for value in setValue:
+        if items.count(value) >= 2:
+            resultList.append(value)
+
+    return sorted(resultList)
 
 
-# sort_repeated([1,2,3,2,1])
+# print(sort_repeated([1,2,3,2,1]))
+# print(sort_repeated([1,2,3,2, 2,4]))
+# print(sort_repeated([2]))
 
 #6
 # make dic number without get
@@ -77,8 +101,8 @@ def make_Dict_number_with_get(items):
 
 # result = make_Dict_number([2,5,3,4,6,4,2,4,5])
 # print(result)
-
-
+#
+#
 # result = make_Dict_number_with_get([2,5,3,4,6,4,2,4,5])
 # print(result)
 
@@ -98,21 +122,11 @@ def mostFrequent(items):
         if(value == MaxCount):
             return key
 
-
+# print(mostFrequent([2,5,3,4,6,4,2,4,5]))
 
 #7
 
-def is_reverse(str1,str2):
-    a = ''
-    for i in range(len(str1)):
-        a = a + str1[-1]
-        str1 = str1[:len(str1)-1]
-    if a == str2:
-        return True
-    else:
-        return False
 
-# print(is_reverse("abc","cba"))
 
 
 def histogram(d):
