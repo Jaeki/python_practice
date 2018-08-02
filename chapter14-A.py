@@ -1,13 +1,20 @@
 #resursive 하게 풀것!
 #1 Searching
-def first_perfect_sqaure(list):
+def first_perfect_square(list):
     for i in range(0,len(list)):
         if list[i] >= 0:
             if list[i]**0.5 - int(list[i]**0.5) == 0:
-                return print(i)
+                return i
     return -1
 
-# first_perfect_sqaure([6,8,10,12,9])
+# print(first_perfect_square(list(range(5))))
+# print(first_perfect_square([2,4,6,8,10,12]))
+# print(first_perfect_square([6,8,10,12,9]))
+# print(first_perfect_square([1,1]))
+# print(first_perfect_square([-6, 6, -2, 2, -3, 3]))
+# print(first_perfect_square([42]))
+# print(first_perfect_square([]))
+# print(first_perfect_square([1231241234123123**2]))
 
 #2 Counting
 def num_perfect_squares(list):
@@ -18,12 +25,14 @@ def num_perfect_squares(list):
                 count+=1
     print(count)
 
-# num_perfect_squares([4]*10)
+
 # num_perfect_squares([])
 # num_perfect_squares([0])
 # num_perfect_squares([0,1])
 # num_perfect_squares(list(range(10)))
 # num_perfect_squares([3]*10)
+# num_perfect_squares([4]*10)
+# num_perfect_squares([-4,-2,0,2,4])
 
 #3 Second largest
 def second_largest(lst):
@@ -37,7 +46,7 @@ def second_largest(lst):
             second_largest = lst[i]
     return print(second_largest)
 
-# second_largest([3,-2,10,5])
+# second_largest([3,-2,10,-1,5])
 # second_largest([-2,1,1,-3,5])
 # second_largest([1,2,3,3])
 # second_largest(["alpha","gamma","beta","delta"])
