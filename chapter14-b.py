@@ -59,3 +59,15 @@ def make_Dict_number(lst):
 
 
 #7
+
+def is_reverse(str1,str2):
+    a = ''
+    for i in range(len(str1)):
+        a = a + str1[-1]
+        str1 = str1[:len(str1)-1]
+    if a == str2:
+        return True
+    else:
+        return False
+
+# print(is_reverse("abc","cba"))
