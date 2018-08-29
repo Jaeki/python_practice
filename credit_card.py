@@ -5,10 +5,33 @@ from sklearn import tree
 from sklearn.externals.six import StringIO
 import pydotplus
 import matplotlib.pyplot as plt
-
+from matplotlib.colors import ListedColormap
+from sklearn import neighbors, datasets
 
 #Plot (1)
-
+n_neighbors = 15
+x1 = data['V1']
+x2 = data['V2']
+y = data.Class
+cmap_light = ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF'])
+cmap_bold = ListedColormap(['#FF0000', '#00FF00', '#0000FF'])
+h =0.02
+clf = neighbors.KNeighborsClassifier(n_neighbors, weights = 'uniform')
+clf.fit(x,y)
+clf
+x_min, x_max = x1.min()- 1, x1.max() - 1
+y_min, y_max = x2.min()- 1, x2.max() - 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                    np.arange(y_min, y_max, h))
+xr = xx.ravel()
+yr = yy.ravel()
+xy = np.c_[xr,yr]
+z = clf.predict(xy)
+z= z.reshape(xx.shape)
+plt.pcolormesh(xx,yy,z,cmap = cmap_light)
+plt.scatter(x1,x2,c=y,cmap = cmap_bold)
+plt.xlim(xx.min(),xx.max())
+plt.ylim(yy.min(),yy.max())
 
 #Plot (2)
 
