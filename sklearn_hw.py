@@ -13,7 +13,7 @@ Y = ['Class']
 
 #Logistic Regression
 LogR = linear_model.LogisticRegression()
-LogR.fit(train[features], train[Y]['Class'])
+model = LogR.fit(train[features], train[Y]['Class'])
 
 #score 계산
-print(LogR.score(test[features], test[Y]))
+print(model.score(test[features], test[Y]))
