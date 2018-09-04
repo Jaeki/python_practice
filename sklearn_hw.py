@@ -42,7 +42,7 @@ def GetData(valid_item):
     class_0_list = credit_data[credit_data["Class"] == 0].index
     class_1_list = credit_data[credit_data["Class"] == 1].index
 
-    # Row 추가하여 확인하는 코드 
+    # Row 추가하여 확인하는 코드 (교차확인)
     #class_2_list = credit_data[credit_data["Class"] == 1]
     #class_3_list = credit_data[credit_data["Class"] == 1]
     #class_1_list = pd.concat([class_2_list, class_3_list], axis=0)
