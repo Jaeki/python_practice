@@ -42,6 +42,13 @@ def GetData(valid_item):
     class_0_list = credit_data[credit_data["Class"] == 0].index
     class_1_list = credit_data[credit_data["Class"] == 1].index
 
+    # Row 추가하여 확인하는 코드 
+    #class_2_list = credit_data[credit_data["Class"] == 1]
+    #class_3_list = credit_data[credit_data["Class"] == 1]
+    #class_1_list = pd.concat([class_2_list, class_3_list], axis=0)
+    #class_1_list = pd.concat([class_1_list, class_1_list], axis=0)
+    #class_1_list = class_1_list.index
+
      #unbalance data여기 때문에 class 0/1의 data 비를 class 1기준으로 balancing 해줌
     data_index = class_0_list[:len(class_1_list)].append(class_1_list[:len(class_1_list)])
     
