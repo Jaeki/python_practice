@@ -14,14 +14,16 @@ class Stack:
         self.items = []
 
     def push(self, item):
+        pass
 
     ## Fill here
 
     def pop(self):
-
+        pass
     ## Fill here
 
     def isempty(self):
+        pass
 
 
 ## Fill here
@@ -31,8 +33,10 @@ def paren_v1(lst):
 
     for idx in range(len(lst)):
         if lst[idx] == '(':
+            pass
         # push into stack
         elif lst[idx] == ')':
+            pass
     # if stack is not empty, pop one element and print matching strings
     # print('(%d,%d) match'%( left_paranthesis_idx , right_paranthesis_idx))
     # else print no match with idx
@@ -47,19 +51,27 @@ import queue
 
 
 def paren_v2(lst):
-    # par_stack = ???
+    par_stack = queue.LifoQueue(20)
 
     for idx in range(len(lst)):
         if lst[idx] == '(':
-        # push into stack
+            # push into stack
+            par_stack.put(idx)
+
         elif lst[idx] == ')':
-    # if stack is not empty, pop one element and print matching strings
-    # print('(%d,%d) match'%( left_paranthesis_idx , right_paranthesis_idx))
-    # else print no match with idx
-    # print('%d no match (right)' % right_paranthesis_idx)
-
+            # else print no match with idx
+            right_paranthesis_idx = idx
+            # if stack is not empty, pop one element and print matching strings
+            if not par_stack.empty():
+                left_paranthesis_idx = par_stack.get()
+                print('(%d,%d) match' % (left_paranthesis_idx, right_paranthesis_idx))
     # print all no matching left paranthesis
+    while(not par_stack.empty()):
+        print('No match for left parenthesis at : %d' % par_stack.get())
 
+#Test
+equation = list('))(3*(9*2))/2((')
+paren_v2(equation)
 
 ###############################################################################
 # 2 Hanoi tower
@@ -67,9 +79,9 @@ def paren_v2(lst):
 
 import queue
 
-A =  ## Fill here
-B =  ## Fill here
-C =  ## Fill here
+A =  queue.LifoQueue(10) ## Fill here
+B =  queue.LifoQueue(10) ## Fill here
+C =  queue.LifoQueue(10) ## Fill here
 Towers = [0, A, B, C]
 # Towers[0] : 안쓰는 element(편의상), Towers[1] : Tower A, Towers[2] : Tower B, Towers[3] : Tower C
 
@@ -113,10 +125,12 @@ class MaxHeap(object):
         self.heapArray = self.heaparray()
 
     def left(self, i):
+        pass
 
     # Go to left subtree and return index
 
     def right(self, i):
+        pass
 
     # Go to right subtree and return index
 
@@ -133,21 +147,25 @@ class MaxHeap(object):
         return str(self.inorderArray)
 
     def heaparray(self):
+        pass
 
     # Make heap array
 
     def heapsort(self):
         ls = []
         while not self.pq.empty():
+            pass
         # dequeue one element
         # add to ls
         return str(ls)
 
     def enqueue(self, a):
+        pass
 
     # Fill here
 
     def dequeue(self):
+        pass
 
     # Fill here
 
