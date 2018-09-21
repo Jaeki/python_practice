@@ -14,7 +14,7 @@ class Maintable(Frame):
 
         self.hidden_image = figure
 
-        #self.shuffle()
+        self.shuffle()
 
         # TODO
         # 16개의 ImageButton 객체 생성 및 이벤트 핸들러 바인딩
@@ -29,6 +29,7 @@ class Maintable(Frame):
     # 이미지 shuffle하는 함수
     def shuffle(self):
         self.imagelist = sample(range(0, self.num), self.num)
+        print(self.imagelist)
 
     # TODO
     # 마우스 눌렀을 때 이벤트 처리. 
