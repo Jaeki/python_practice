@@ -72,7 +72,7 @@ class Conveyor(Frame):
     def wrong_match_config(self):
         # 마지막일 때
         if(self.cur_idx == 0):
-            sys.exit()
+            return 1
             
         # FINAL일 때
         elif self.cur_idx == self.num-1:
