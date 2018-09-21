@@ -30,10 +30,10 @@ class App(Frame):
 
 
     def load_images(self):
-        self.figure_images = list(Image.open("picture\\%d.JPG" % (i+1)) for i in range(self.num*self.num + 1))
+        self.figure_images = list(Image.open("picture\\%d.JPG" % (i+1)) for i in range(self.num*self.num + 2))
         self.alphabet_images = list(PhotoImage(file="alphabet\\%d.GIF" % (i+1)) for i in range(self.num*self.num))
         self.resized_images = list(ImageTk.PhotoImage(self.figure_images[i].resize((50,50), Image.ANTIALIAS)) for i in range(self.num*self.num))
-        self.figure_images = list(ImageTk.PhotoImage(self.figure_images[i]) for i in range(self.num*self.num + 1))
+        self.figure_images = list(ImageTk.PhotoImage(self.figure_images[i]) for i in range(self.num*self.num +2))
 
     # TODO
     # MainTable에서 선택한 도형 이미지와 Conveyor에서 Marker가 현재 가리키는 이미지를 비교한 후 비교 결과에 따라 처리한다.
@@ -47,19 +47,27 @@ class App(Frame):
         if( self.conveyor.cur_idx == clicked_index):
             # success
             if(self.conveyor.correct_match_config() == 1):
-                self.app_frame.grid_forget()
-                self.app_frame.pack_forget()
+                self.finish(True)
 
-                b = ImageButton(self.master, image=self.figure_images[16], relief=SOLID, overrelief=RIDGE, borderwidth=1)
-                b.grid(column=0, row=0)
-                b.bind("<Button-1>", sys.exit)
-
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
         else :
-            self.conveyor.wrong_match_config()
+            # 끝까지 틀렸을 경우 1를 return 함
+            if self.conveyor.wrong_match_config() == 1:
+                self.finish(False)
         print("compare_images")
     # TODO
     # 종료 조건 만족 시 실행
-    def finish(self, win):       
-        pass
+    def finish(self, win):
+        if(win == True):
+            finish_index = 16
+        else:
+            finish_index = 17
+
+        self.app_frame.grid_forget()
+        self.app_frame.pack_forget()
+
+        b = ImageButton(self.master, image=self.figure_images[finish_index], relief=SOLID, overrelief=RIDGE, borderwidth=1)
+        b.grid(column=0, row=0)
+        b.bind("<Button-1>", sys.exit)
+
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
