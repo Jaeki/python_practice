@@ -1,0 +1,87 @@
+from graphviz import Digraph
+
+dot = Digraph(node_attr={'style':'filled', 'fillcolor': 'goldenrod2', 'size': '7,5'}, engine='dot')
+dot.node('7', '7th Edition')
+dot.node('3', '32V')
+dot.node('V', 'V7M')
+dot.node('X', 'Xenix')
+dot.node('U', 'UniPlus+')
+dot.edges(['73', '7V', '7X', '7U'])
+
+dot.node('8', '8th Edition')
+dot.node('9', '9th Edition')
+dot.edges(['89'])
+
+dot.node('1', '1 BSD')
+dot.node('2', '2 BSD')
+dot.node('m', '2.8 BSD')
+dot.node('t', 'Ultrix-11')
+dot.node('l', '2.9 BSD')
+dot.edges(['12', '2m', 'mt', 'ml'])
+
+dot.node('b', '3 BSD')
+dot.node('4', '4 BSD')
+dot.node('k', '4.1 BSD')
+dot.node('o', '4.2 BSD')
+dot.node('p', '4.3 BSD')
+dot.node('y', 'Ultrix-32')
+dot.edges(['3b', 'b4', '4k', 'ko', 'km', 'k8', 'op', 'oy'])
+
+dot.render('graphviz-hw.gv', view=True)
+rb = Digraph()
+rb.attr('graph', ratio='.48')
+rb.attr('node', style='filled', color='black', shape='circle', width='.6', fontname='Helvetica', fontweight='bold', fontcolor='white', fontsize='24', fixedsize='true')
+rb.node('13')
+rb.node('1')
+rb.node('11')
+rb.node('15')
+rb.node('25')
+rb.attr('node', fillcolor='red')
+rb.node('8')
+rb.node('17')
+rb.node('22')
+rb.node('27')
+rb.attr('node', fillcolor='black', shape='record', label='NIL', width='0.4', height='.25', fontsize='16')
+rb.node('n1')
+rb.node('n2')
+rb.node('n3')
+rb.node('n4')
+rb.node('n5')
+rb.node('n6')
+rb.node('n7')
+rb.node('n8')
+rb.node('n9')
+rb.node('n10')
+rb.node('n11')
+rb.attr('node', style='filled', fillcolor='red', shape='circle', label=r"\N", width='.6',
+        fontname='Helvetica', fontweight='bold', fontcolor='white', fontsize='24', fixedsize='true')
+rb.node('6')
+rb.edges([('13', '8'), ('13', '17')])
+rb.edge('8', '1', weight='6')
+rb.edge('8', '11', weight='5')
+rb.edge('17', '15', weight='4')
+rb.edge('17', '25', weight='5')
+rb.edge('1', 'n1', weight='7')
+rb.edge('1', '6')
+rb.edge('11', 'n4', weight='10')
+rb.edge('11', 'n5', weight='14')
+rb.edge('6', 'n2')
+rb.edge('6', 'n3')
+rb.edge('15', 'n6', weight='14')
+rb.edge('15', 'n7', weight='10')
+rb.edge('25', '22')
+rb.edge('25', '27', weight='6')
+rb.edge('22', 'n8', weight='5')
+rb.edge('22', 'n9', weight='3')
+rb.edge('27', 'n10', weight='3')
+rb.edge('27', 'n11', weight='5')
+
+rb.render('rb_graph', view=True)
+
+
+
+
+
+
+
+
