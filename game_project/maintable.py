@@ -1,6 +1,7 @@
 from imagebtn import *
 from tkinter import *
 from random import *
+
 import time
 
 class Maintable(Frame):
@@ -29,7 +30,17 @@ class Maintable(Frame):
     # 이미지 shuffle하는 함수
     def shuffle(self):
         self.imagelist = sample(range(0, self.num), self.num)
-        print(self.imagelist)
+
+
+        answer = list(map(lambda x : x +1 , self.imagelist))
+        print(answer)
+        print("correct answer : ")
+        for i in range(len(answer)):
+            if( i % 4 == 0):
+                print("\n")
+            print(answer[i], end=",")
+
+        print("\n")
 
     # TODO
     # 마우스 눌렀을 때 이벤트 처리. 
@@ -38,7 +49,7 @@ class Maintable(Frame):
     def show_hidden_image(self, event):
         # pyimageXX 와 같이 image 값이 나오고 있어 앞 pyimage 부분 빼고 7부터는 숫자임
         image_index = int(event.widget.cget("image")[7:]) - 1
-        event.widget.config(image=self.hidden_image[image_index])
+        event.widget.config(image=self.get_figure_image(image_index))
         self.selected_image = image_index
 
     # TODO
@@ -49,5 +60,10 @@ class Maintable(Frame):
         event.widget.config(image=self.images[self.selected_image])
 
         # 선택한 image 의 index를 return 한다. 값은 0 부터
-        self.master.compare_images(self.selected_image)
+        # suffle 된 값을 찾기 위해서 imagelist를 이용한다.
+        self.master.compare_images(self.imagelist[self.selected_image])
         self.selected_image = None
+
+    # 숨겨진 그림을 보여주기 위해서 선택된 index의 image를 return 해준다.
+    def get_figure_image(self, index):
+        return self.hidden_image[self.imagelist[index]]
