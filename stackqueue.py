@@ -105,9 +105,9 @@ def moveDisk(n, _from, _to, _through):
 
 # hanoi()
 
-###############################################################################
-# 3 Max Heap
-###############################################################################
+##############################################################################
+# Max Heap
+##############################################################################
 
 import queue
 
@@ -118,54 +118,80 @@ class MaxHeap(object):
     def __init__(self, lst):
         self.lst = lst
         self.heapArray = []
-        self.inorderArray = []
-        # self.pq = PriorityQueue()
+        self.pq = queue.PriorityQueue()
         # You can add additional code here
-
-        self.heapArray = self.heaparray()
+        self.heaparray()
+        self.largest = 0
 
     def left(self, i):
-        pass
+        return 2 * i + 1
 
     # Go to left subtree and return index
 
     def right(self, i):
-        pass
+        return 2 * i + 2
 
     # Go to right subtree and return index
 
     def inorder(self, i):
         if (self.heapArray[i] != None):  # If heapArray is not empty,
-            # If left subtree exists,
-            # Do self.inorder( self.left(i) )
-            self.inorderArray.append(self.heapArray[i])  # Append node itself
-            # If right subtree exists,
-            # Do self.inorder( self.right(i) )
+            if (self.left(i) < len(self.heapArray)):
+                if (self.heapArray[self.left(i)] != None):
+                    if (self.heapArray[self.left(i)] > self.heapArray[i]):
+                        self.heapArray[self.left(i)], self.heapArray[i] = self.heapArray[i], self.heapArray[self.left(i)]
+                    else:
+                        self.inorder(self.left(i))
+            if (self.right(i) < len(self.heapArray)):
+                if (self.heapArray[self.right(i)] != None):
+                    if (self.heapArray[self.right(i)] > self.heapArray[i]):
+                        self.heapArray[self.right(i)], self.heapArray[i] = self.heapArray[i], self.heapArray[self.right(i)]
+                    else:
+                        self.inorder(self.right(i))
+
+
+                # If left subtree exists,
+                # Do self.inorder( self.left(i) )
+
+                # if (self.heapArray[i] not in self.inorderArray):
+
+                # If right subtree exists,
+                # Do self.inorder( self.right(i) )
+                # Append node itself
 
     def __str__(self):
-        self.inorder(0)  # Build inorder list
-        return str(self.inorderArray)
+        n = int(len(lst) / 2)
+        for i in range(n):
+            self.inorder(0)  # Build inorder list
+        return str(self.heapArray)
 
     def heaparray(self):
-        pass
-
+        self.heapArray = self.lst
     # Make heap array
 
     def heapsort(self):
         ls = []
+        self.dequeue()
         while not self.pq.empty():
-            pass
+            ls.append(self.pq.get())
+
         # dequeue one element
         # add to ls
         return str(ls)
 
     def enqueue(self, a):
-        pass
-
+        n = int(len(a)/2)
+        for i in range(n):
+            self.inorder(0)
+        return str(self.heapArray)
     # Fill here
 
     def dequeue(self):
-        pass
+        for i in range(len(lst)):
+            self.pq.put(self.heapArray[0])
+            self.heapArray = self.heapArray[1:]
+            self.enqueue(self.heapArray)
+
+
 
     # Fill here
 
@@ -180,7 +206,8 @@ class MaxHeap(object):
 def heapsort(maxheap):
     print(maxheap.heapsort())
 
-# lst = [5,3,1,4,2]
-# h = MaxHeap(lst)
-# print(h)
-# heapsort(h)
+
+lst = [5, 3, 1, 4, 2, 30, 25, 20, 15]
+h = MaxHeap(lst)
+print(h)
+heapsort(h)
