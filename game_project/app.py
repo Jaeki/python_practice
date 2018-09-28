@@ -39,12 +39,13 @@ class App(Frame):
     # MainTable에서 선택한 도형 이미지와 Conveyor에서 Marker가 현재 가리키는 이미지를 비교한 후 비교 결과에 따라 처리한다.
     def compare_images(self, clicked_index):
 
-        print("convery index", self.conveyor.cur_idx)
-        print("clicked index", clicked_index)
+        #print("convery index", self.conveyor.cur_idx)
+        #print("clicked index", clicked_index)
         # 이미지가 일치하지 않는 경우
 
         # convery의 현재 index와 clicked index가 같은 경우는 맞음
-        if( self.conveyor.cur_idx == clicked_index):
+        # print("cur_fig : ", self.conveyor.get_cur_fig(), "clicked_ index " , clicked_index)
+        if( self.conveyor.get_cur_fig() == clicked_index):
             # success
             if(self.conveyor.correct_match_config() == 1):
                 self.finish(True)
@@ -54,7 +55,7 @@ class App(Frame):
             # 끝까지 틀렸을 경우 1를 return 함
             if self.conveyor.wrong_match_config() == 1:
                 self.finish(False)
-        print("compare_images")
+        #print("compare_images")
     # TODO
     # 종료 조건 만족 시 실행
     def finish(self, win):
