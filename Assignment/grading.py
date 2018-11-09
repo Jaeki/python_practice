@@ -58,7 +58,12 @@ def letter():
 
     
 def perfect():
-   
+    clist = db.list_collection_names()
+    if 'relative' in clist:
+        db.drop_collection('relative')
+    
+    db.create_collection('relative')
+    
     for i in range(100):
         chk = 0
         result_q = col.find({'sid':i, 'grades.type': 'quiz'}, {'_id':0,'grades.$':1})
