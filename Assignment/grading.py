@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[6]:
+
+
 from pymongo import MongoClient
 from pprint import pprint
 import sys
@@ -5,13 +11,21 @@ client = MongoClient()
 db = client.ds2
 col = db.grades
 
+
+# In[7]:
+
+
 def pagination():
-    result = col.find({'sid':{'$gte':10,'$lte':19}},{'_id':0}).limit(10)
+    result = col.find({'sid':{'$gte':10,'$lte':19}},{'_id':0,'sid':1,'grades':1,'note':1}).limit(10)
     for i in result:
         print(i)
 
+
+# In[14]:
+
+
 def letter():
-    
+
     for i in range(100):
         result_q = col.find({'sid':i, 'grades.type': 'quiz'}, {'_id':0,'grades.$':1})
         for j in result_q:
@@ -50,20 +64,24 @@ def letter():
         else:
             grade = 'F'
         
-        col.update({'sid':i},{'$set':{'total':total, 'letter':grade}})
+        col.update({'sid':i},{'$set':{'total':total,'letter':grade}})
     
     
     presult = col.find({},{'_id':0,'sid':1,'total':1,'letter':1}).limit(10).sort([('total',-1)])
-    pprint(list(presult))
+    for z in presult:
+        print(z)
 
-    
+
+
+
+# In[21]:
+
+
 def perfect():
     clist = db.list_collection_names()
     if 'relative' in clist:
         db.drop_collection('relative')
-    
     db.create_collection('relative')
-    
     for i in range(100):
         chk = 0
         result_q = col.find({'sid':i, 'grades.type': 'quiz'}, {'_id':0,'grades.$':1})
@@ -106,25 +124,27 @@ def perfect():
                 total = 100
         else:
             total = quiz_s + homework_s + exam_s
-            
-        pmax = 0
-        pmin = 100
-        if quiz_r > pmax:
-            pmax = quiz_r
-        if homework_r > pmax:
-            pmax = homework_r
-        if exam_r > pmax:
-            pmax = exam_r
         
-        if quiz_r < pmin:
-            pmin = quiz_r
-        if homework_r < pmin:
-            pmin = homework_r
-        if exam_r < pmin:
-            pmin = exam_r
+        db.relative.insert({'sid':i, 'total':total})
+        
 
-        perc = ((total-pmin) / (pmax - pmin)) * 100
-        
+
+    pmax = 0
+    pmin = 100
+
+    relative_db = db.relative.find({},{'_id':0,'total':1})    
+
+    for i in relative_db:
+        if  i['total']> pmax:
+            pmax = i['total']
+            
+        if i['total']< pmin:
+            pmin = i['total']
+    cnt = 0
+    relative_db = db.relative.find({},{'_id':0,'total':1})  
+    for i in relative_db:
+        perc = ((i['total']-pmin) / (pmax - pmin)) * 100
+
         if perc >= 80:
             grade = 'A'
         elif perc >= 50:
@@ -136,10 +156,15 @@ def perfect():
         else:
             grade = 'F'
         
-        col.update({'sid':i},{'$set':{'letter':grade}})
+        
+        db.relative.update({'sid':cnt},{'$set':{'letter':grade}})
+        cnt +=1
 
-    presult = col.find({},{'_id':0,'sid':1,'letter':1}).limit(11)
-    pprint(list(presult))
+    presult = db.relative.find({},{'_id':0,'sid':1,'letter':1}).limit(11)
+    for z in presult:
+        print(z)
+
+
 
 if __name__ == "__main__":
     client = MongoClient()
@@ -148,12 +173,15 @@ if __name__ == "__main__":
 
     raw_input = sys.argv[1]
     #TODO
-    if raw_input == 1:
+    if raw_input == '1':
         pagination()
-    elif raw_input == 2:
+    elif raw_input == '2':
         letter()
-    elif raw_input == 3:
+    elif raw_input == '3':
         perfect()
     else:
         print("Check your number!!")
     client.close()
+
+
+
