@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from pymongo import MongoClient, TEXT
 from pprint import pprint
 import sys
@@ -23,19 +22,15 @@ for i in range(len(input)):
     keyword = input[i].split(':')
     if keyword[0] == 'to':
         to_array = keyword[1].split(',')
-        # print('To: ', to_array)
     elif keyword[0] == 'from':
         from_array = keyword[1]
-        # print('From: ',from_array)
     elif keyword[0] == 'not':
         not_array = keyword[1].split(',')
-        # print('Not: ',not_array)
     elif keyword[0] == 'sort':
         sort_array = keyword[1]
-        # print('Sort: ', sort_array)
     else:
         none_array = keyword[0].split(',')
-        # print('None: ', none_array)
+
 col.drop_indexes()
 col.create_index( [('subject', TEXT), ('text', TEXT)], weights = {'subject':2, 'text':1} )
 
@@ -66,6 +61,7 @@ if len(sort_array) > 0:
     query.append(sort_2)
 
 result = col.aggregate(query)
+
 print('sender\t\t\tsubject\t\t\ttext\t\t\t\t\tdate')
 for item in result:
     print('{}\t{}\t{}\t{}'.format(
