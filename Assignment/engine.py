@@ -3,7 +3,6 @@
 from pymongo import MongoClient, TEXT
 from pprint import pprint
 import sys
-import re
 
 client = MongoClient()
 db = client.ds2
