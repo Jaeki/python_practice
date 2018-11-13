@@ -42,7 +42,7 @@ def problem_b():
     #final_pokemons = ...
 
 #	result = pokedex.find({"$and" : [{"next_evolution" :{"$exists" : False}}, {"prev_evolution" :{"$exists" : True}}]}, {"id" : True, "name": True, "candy" : True, "prev_evolution" : True,  "_id" :False}).sort([("id", 1)])
-	result = pokedex.find({"$and" : [{"next_evolution" :{"$exists" : False}}, {"prev_evolution" :{"$exists" : True}}, {"candy" :{"$exists" : True}}]}, {"id" : True, "name": True, "candy" : True, "prev_evolution" : True,  "_id" :False}).sort([("id", 1)])
+	result = pokedex.find({"$and" : [{"next_evolution" :{"$exists" : False}}, {"prev_evolution" :{"$exists" : True}}, {"candy_count" :{"$exists" : False}}]}, {"id" : True, "name": True, "candy" : True, "prev_evolution" : True,  "_id" :False}).sort([("id", 1)])
 
 	#print(len(list(result)))
 	#pprint(list(result))
