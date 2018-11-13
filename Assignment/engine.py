@@ -70,3 +70,4 @@ for item in result:
         item['text'].replace('\n', '').replace('\t', ' ').rjust(36)[:36],
         item['date'].rjust(16)[:16]
     ))
+client.close()
