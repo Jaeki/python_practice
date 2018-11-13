@@ -33,7 +33,7 @@ def problem_a():
 	#	print(item)
 
 	for item in strong:
-		pprint(item)
+		print(item)
 
 
 def problem_b():
@@ -41,11 +41,13 @@ def problem_b():
     # TODO: Problem B
     #final_pokemons = ...
 
-	result = pokedex.find({"$and" : [{"next_evolution" :{"$exists" : False}}, {"prev_evolution" :{"$exists" : True}}]}, {"id" : True, "name": True, "candy" : True, "prev_evolution" : True,  "_id" :False}).sort([("id", 1)])
+#	result = pokedex.find({"$and" : [{"next_evolution" :{"$exists" : False}}, {"prev_evolution" :{"$exists" : True}}]}, {"id" : True, "name": True, "candy" : True, "prev_evolution" : True,  "_id" :False}).sort([("id", 1)])
+	result = pokedex.find({"$and" : [{"next_evolution" :{"$exists" : False}}, {"prev_evolution" :{"$exists" : True}}, {"candy" :{"$exists" : True}}]}, {"id" : True, "name": True, "candy" : True, "prev_evolution" : True,  "_id" :False}).sort([("id", 1)])
+
 	#print(len(list(result)))
 	#pprint(list(result))
 
-
+	i = 0
 	for Mon_info in result:
 		#print(Mon_info)
 		FinalMon_Name = Mon_info["name"]
@@ -57,10 +59,14 @@ def problem_b():
 
 		Candy_result = pokedex.find({"id" : {"$in" : PreMon_Id}}, {"id" : True, "name" : True, "candy_count": True, "candy" : True, "_id" : False})
 		Candy_total = 0
+
 		for Candy_Info in Candy_result:
 			Candy_total += int(Candy_Info["candy_count"])
+			Candy_Name = Candy_Info["candy"]
 
 		print('{} => {}: {}'.format(FinalMon_Name, Candy_Name, Candy_total))
+		i += 1
+	#print(i)
 
 #    for pokemon in final_pokemons:
 #        candy, count = "", 0
